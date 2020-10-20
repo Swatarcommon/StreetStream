@@ -9,7 +9,6 @@ class AppContainer extends Component {
 }
 
 const putStateToProps = (state) => {
-    console.log(state);
     return {
         isLogged: state.app.isLogged,
     };

@@ -12,10 +12,16 @@ namespace StreetStream {
         }
 
         public IConfiguration Configuration { get; }
-
+        readonly string MyAllowSpecific = "_myAllowSpecificForDev";
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
-
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecific,
+                                  builder => {
+                                      builder.WithOrigins("http://localhost:3000");
+                                  });
+            });
             services.AddControllersWithViews();
 
             // In production, the React files will be served from this directory
@@ -34,7 +40,7 @@ namespace StreetStream {
 
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
-
+            app.UseCors(MyAllowSpecific);
             app.UseRouting();
 
             app.UseEndpoints(endpoints => {
@@ -45,9 +51,8 @@ namespace StreetStream {
 
             app.UseSpa(spa => {
                 spa.Options.SourcePath = "ClientApp";
-
                 if (env.IsDevelopment()) {
-                    spa.UseReactDevelopmentServer(npmScript: "start");
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
                 }
             });
         }
