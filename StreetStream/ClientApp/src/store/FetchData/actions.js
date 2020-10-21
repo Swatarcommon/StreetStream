@@ -1,4 +1,5 @@
 import axios from "axios";
+import {SERVER_URL} from "../../config.json";
 
 const fetchForecastsRequest = () => {
     return {
@@ -23,12 +24,12 @@ const fetchForecastsFailure = (error) => {
 export const fetchForecasts = () => {
     return (dispatch) => {
         dispatch(fetchForecastsRequest());
-        axios.get('http://localhost:3001/weatherforecast', {
+        axios.get(SERVER_URL + '/weatherforecast', {
             mode: 'no-cors',
         })
             .then(response => {
                 const forecasts = response.data;
-                dispatch(fetchForecastsSuccess(forecasts))
+                dispatch(fetchForecastsSuccess(forecasts));
             }).catch(error => {
             dispatch(fetchForecastsFailure(error.message));
         });

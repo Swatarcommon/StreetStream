@@ -47,6 +47,6 @@ export default class FetchData extends Component {
     }
 
     async loadForecasts() {
-        this.props.fetchForecast();
+        this.props.fetchForecasts();
     }
 }
