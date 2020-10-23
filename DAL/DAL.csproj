@@ -4,4 +4,42 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Migrations\20201022133552_Main_Migration.cs" />
+    <Compile Remove="Migrations\20201022133552_Main_Migration.Designer.cs" />
+    <Compile Remove="Migrations\20201022134243_Main_Migration.cs" />
+    <Compile Remove="Migrations\20201022134243_Main_Migration.Designer.cs" />
+    <Compile Remove="Migrations\20201022134446_Main_Migration.cs" />
+    <Compile Remove="Migrations\20201022134446_Main_Migration.Designer.cs" />
+    <Compile Remove="Migrations\20201022135359_Initial_Migration.cs" />
+    <Compile Remove="Migrations\20201022135359_Initial_Migration.Designer.cs" />
+    <Compile Remove="Migrations\20201022140012_Migr_2.cs" />
+    <Compile Remove="Migrations\20201022140012_Migr_2.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="StreetStreamDbContext.cs~RF739971.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.9">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.9">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.9" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.9" />
+    <PackageReference Include="runtime.any.System.Collections" Version="4.3.0" />
+    <PackageReference Include="System.Runtime" Version="4.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Models\Models.csproj" />
+  </ItemGroup>
+
 </Project>
