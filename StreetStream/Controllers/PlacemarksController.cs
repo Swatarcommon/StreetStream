@@ -19,28 +19,19 @@ namespace StreetStream.Controllers {
         }
 
         [HttpGet]
-        public IEnumerable<Placemark> Get(string orderByFields, string desc = "false", long minid = 0, long maxid = 1, int offset = 2) {
-            var placeMark = unitOfWork.PlacemarkRepository.Get(filter: item => (item.Id >= minid && item.Id <= maxid),
-                                                       offset: offset,
-                                                       desc: desc,
-                                                       orderByFields: orderByFields,
-                                                       include: source => source
-                                                               .Include(evt => evt.Event)
-                                                               .ThenInclude(cmrAcc => cmrAcc.CommercialAccount)
-                                                               .Include(evt => evt.Event)
-                                                               .ThenInclude(ctg => ctg.CategoryEvent)).AsEnumerable();
+        public IEnumerable<Placemark> Get(string orderByFields, string desc = "false", long minid = 0, long maxid = 1, int offset = 2, string includingProps = "") {
+            var placeMark = unitOfWork.PlacemarkRepository.GetAsync(p => p.Id >= minid && p.Id <= maxid, includingProps, offset, orderByFields, desc);
             if (placeMark == null) {
                 Response.Headers.Add("xxx-error", "Invalid-Query");
                 Response.StatusCode = 400;
                 return null;
             }
-            return placeMark;
+            return placeMark.Result;
         }
 
         [HttpGet("{id}")]
-        public Placemark Get(long id) {
-            //var placeMark = unitOfWork.PlacemarkRepository.GetByID(id);
-            var placeMark = unitOfWork.PlacemarkRepository.GetAsync(i => i.Id == id);
+        public Placemark Get(long id, string includingProps = "") {
+            var placeMark = unitOfWork.PlacemarkRepository.GetByAsync(p => p.Id == id, includingProps);
             if (placeMark == null) {
                 Response.Headers.Add("xxx-error", "Invalid-Id");
                 Response.StatusCode = 400;

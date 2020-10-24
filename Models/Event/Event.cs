@@ -22,6 +22,7 @@ namespace Models.Event {
         public Placemark Placemark { get; set; }
         [NavigationProperty]
         public CommercialAccount CommercialAccount { get; set; }
+        [NavigationProperty]
         public ICollection<CategoryEvent> CategoryEvent { get; set; }
 
     }
