@@ -8,7 +8,7 @@ namespace DAL {
     public class UnitOfWork {
         private StreetStreamDbContext context;
         private GenericRepository<Placemark> placemarkRepository;
-
+        private GenericRepository<Event> eventRepository;
         public UnitOfWork(StreetStreamDbContext context) {
             this.context = context;
         }
@@ -23,6 +23,14 @@ namespace DAL {
             }
         }
 
+        public GenericRepository<Event> EventRepository {
+            get {
+                if (this.eventRepository == null) {
+                    this.eventRepository = new GenericRepository<Event>(context);
+                }
+                return eventRepository;
+            }
+        }
         public void Save() {
             context.SaveChanges();
         }
