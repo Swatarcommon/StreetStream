@@ -12,7 +12,7 @@ namespace Models.Event {
         public long Id { get; set; }
         [MinLength(1)]
         public string Name { get; set; }
-        [NavigationProperty(typeof(Category))]
+        [NavigationProperty]
         public ICollection<CategoryEvent> CategoryEvent { get; set; }
     }
 }

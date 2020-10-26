@@ -7,9 +7,9 @@ namespace Models.Event {
     public class CategoryEvent {
         public long EventId { get; set; }
         public long CategoryId { get; set; }
-        [NavigationProperty(typeof(CategoryEvent))]
+        [NavigationProperty(true)]
         public Event Event { get; set; }
-        [NavigationProperty(typeof(CategoryEvent))]
+        [NavigationProperty(true)]
         public Category Category { get; set; }
     }
 }

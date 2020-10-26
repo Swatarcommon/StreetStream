@@ -13,7 +13,8 @@ namespace DAL {
             List<string> navigationProperties = new List<string>();
             var includer = includeList.ToUpper().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
             //get navigation properties
-            GetNavigationProperties(type, type, string.Empty, navigationProperties, includer);
+            List<Type> manyToManyTypes = new List<Type>();
+            GetNavigationProperties(type, type, string.Empty, navigationProperties, includer, manyToManyTypes);
 
             Func<IQueryable<T>, IQueryable<T>> includes = (query => {
                 return navigationProperties.Aggregate(query, (current, inc) => current.Include(inc));
@@ -22,7 +23,7 @@ namespace DAL {
             return includes;
         }
 
-        private static void GetNavigationProperties(Type baseType, Type type, string parentPropertyName, IList<string> accumulator, IList<string> includer) {
+        private static void GetNavigationProperties(Type baseType, Type type, string parentPropertyName, IList<string> accumulator, IList<string> includer, IList<Type> manyToManyTypes) {
             //get navigation properties
             var properties = type.GetProperties();
             var navigationPropertyInfoList = properties.Where(p => p.IsDefined(typeof(NavigationPropertyAttribute)));
@@ -41,8 +42,10 @@ namespace DAL {
                     var isJsonIgnored = prop.IsDefined(typeof(JsonIgnoreAttribute));
                     var attrs = prop.GetCustomAttributes();
                     foreach (NavigationPropertyAttribute attr in attrs) {
-                        if (!isJsonIgnored && elementType != baseType && attr.EndedNavType != type) {
-                            GetNavigationProperties(baseType, elementType, properyName, accumulator, includer);
+                        if (!isJsonIgnored && elementType != baseType && !manyToManyTypes.Any(s => s == elementType)) {
+                            if (attr.IsManyToMany == true)
+                                manyToManyTypes.Add(elementType);
+                            GetNavigationProperties(baseType, elementType, properyName, accumulator, includer, manyToManyTypes);
                         }
                     }
                 }

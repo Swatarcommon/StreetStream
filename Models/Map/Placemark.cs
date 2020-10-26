@@ -6,7 +6,6 @@ using System.Text;
 using System.Xml.Serialization;
 
 namespace Models.Map {
-    [Serializable]
     public class Placemark {
         public long Id { get; set; }
         public double X { get; set; }

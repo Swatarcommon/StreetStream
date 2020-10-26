@@ -7,7 +7,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Models.Event {
-    [Serializable]
     public class Event {
         public Event() {
             CategoryEvent = new List<CategoryEvent>();

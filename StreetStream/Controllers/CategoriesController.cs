@@ -10,21 +10,21 @@ using Models.Event;
 namespace StreetStream.Controllers {
     [Route("api/[controller]")]
     [ApiController]
-    public class EventsController : ControllerBase {
+    public class CategoriesController : ControllerBase {
         UnitOfWork unitOfWork;
-        public EventsController(UnitOfWork unitOfWork) {
+        public CategoriesController(UnitOfWork unitOfWork) {
             this.unitOfWork = unitOfWork;
         }
 
         [HttpGet]
-        public IEnumerable<Event> Get(string orderByFields, string desc = "false", long minid = 0, long maxid = 1, int offset = 2, string includingProps = "") {
-            var placeMarks = unitOfWork.EventRepository.GetAsync(p => p.Id >= minid && p.Id <= maxid, includingProps, offset, orderByFields, desc);
-            if (placeMarks == null) {
+        public IEnumerable<Category> Get(string orderByFields, string desc = "false", long minid = 0, long maxid = 1, int offset = 2, string includingProps = "") {
+            var categories = unitOfWork.CategoryRepository.GetAsync(p => p.Id >= minid && p.Id <= maxid, includingProps, offset, orderByFields, desc);
+            if (categories == null) {
                 Response.Headers.Add("xxx-error", "Invalid-Query");
                 Response.StatusCode = 400;
                 return null;
             }
-            return placeMarks.Result;
+            return categories.Result;
         }
     }
 }
