@@ -5,27 +5,26 @@ using System.Threading.Tasks;
 using DAL;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Models.Event;
+using Models.Account;
 
 namespace StreetStream.Controllers {
     [Route("api/[controller]")]
     [ApiController]
-    public class EventsController : ControllerBase {
+    public class ImagesController : ControllerBase {
         UnitOfWork unitOfWork;
-
-        public EventsController(UnitOfWork unitOfWork) {
+        public ImagesController(UnitOfWork unitOfWork) {
             this.unitOfWork = unitOfWork;
         }
 
         [HttpGet]
-        public IEnumerable<Event> Get(string orderByFields = "", string desc = "false", long minid = 0, long maxid = Int64.MaxValue, int offset = 0, string includingProps = "") {
-            var placeMarks = unitOfWork.EventRepository.GetAsync(p => p.Id >= minid && p.Id <= maxid, includingProps, offset, orderByFields, desc);
-            if (placeMarks == null) {
+        public IEnumerable<Image> Get(string orderByFields, string desc = "false", long minid = 0, long maxid = 1, int offset = 2, string includingProps = "") {
+            var images = unitOfWork.ImageRepository.GetAsync(p => p.Id >= minid && p.Id <= maxid, includingProps, offset, orderByFields, desc);
+            if (images == null) {
                 Response.Headers.Add("xxx-error", "Invalid-Query");
                 Response.StatusCode = 400;
                 return null;
             }
-            return placeMarks.Result;
+            return images.Result;
         }
     }
 }

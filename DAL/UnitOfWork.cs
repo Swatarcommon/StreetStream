@@ -1,4 +1,5 @@
-﻿using Models.Event;
+﻿using Models.Account;
+using Models.Event;
 using Models.Map;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,9 @@ namespace DAL {
         private GenericRepository<Placemark> placemarkRepository;
         private GenericRepository<Event> eventRepository;
         private GenericRepository<Category> categoryRepository;
+        private GenericRepository<CommercialAccount> commercialAccountRepository;
+        private GenericRepository<RegularAccount> regularAccountRepository;
+        private GenericRepository<Image> imageRepository;
 
         public UnitOfWork(StreetStreamDbContext context) {
             this.context = context;
@@ -17,7 +21,6 @@ namespace DAL {
 
         public GenericRepository<Placemark> PlacemarkRepository {
             get {
-
                 if (this.placemarkRepository == null) {
                     this.placemarkRepository = new GenericRepository<Placemark>(context);
                 }
@@ -40,6 +43,33 @@ namespace DAL {
                     this.categoryRepository = new GenericRepository<Category>(context);
                 }
                 return categoryRepository;
+            }
+        }
+
+        public GenericRepository<CommercialAccount> CommercialAccountRepository {
+            get {
+                if (this.commercialAccountRepository == null) {
+                    this.commercialAccountRepository = new GenericRepository<CommercialAccount>(context);
+                }
+                return commercialAccountRepository;
+            }
+        }
+
+        public GenericRepository<RegularAccount> RegularAccountRepository {
+            get {
+                if (this.regularAccountRepository == null) {
+                    this.regularAccountRepository = new GenericRepository<RegularAccount>(context);
+                }
+                return regularAccountRepository;
+            }
+        }
+
+        public GenericRepository<Image> ImageRepository {
+            get {
+                if (this.imageRepository == null) {
+                    this.imageRepository = new GenericRepository<Image>(context);
+                }
+                return imageRepository;
             }
         }
 
