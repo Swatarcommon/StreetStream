@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using DAL;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Models.Account;
 using Models.Map;
 
 namespace StreetStream.Controllers {
@@ -19,24 +17,37 @@ namespace StreetStream.Controllers {
         }
 
         [HttpGet]
-        public IEnumerable<Placemark> Get(string orderByFields, string desc = "false", long minid = 0, long maxid = 1, int offset = 2, string includingProps = "") {
+        public ActionResult<IEnumerable<Placemark>> Get(string orderByFields, string desc = "false", long minid = 0, long maxid = 1, int offset = 2, string includingProps = "") {
             var placeMark = unitOfWork.PlacemarkRepository.GetAsync(p => p.Id >= minid && p.Id <= maxid, includingProps, offset, orderByFields, desc);
             if (placeMark == null) {
-                Response.Headers.Add("xxx-error", "Invalid-Query");
-                Response.StatusCode = 400;
-                return null;
+                Response.Headers.Add("XXX-ERROR-MESSAGE", "Invalid-Query");
+                return BadRequest(placeMark);
             }
-            return placeMark.Result;
+            return Ok(placeMark.Result);
         }
 
         [HttpGet("{id}")]
-        public Placemark Get(long id, string includingProps = "") {
+        public ActionResult<Placemark> Get(long id, string includingProps = "") {
             var placeMark = unitOfWork.PlacemarkRepository.GetByAsync(p => p.Id == id, includingProps);
             if (placeMark == null) {
-                Response.Headers.Add("xxx-error", "Invalid-Id");
-                Response.StatusCode = 400;
+                Response.Headers.Add("XXX-ERROR", "Invalid-Id");
+                return BadRequest(placeMark);
             }
-            return placeMark.Result;
+            return Ok(placeMark.Result);
+        }
+
+        [HttpPost]
+        public ActionResult<Placemark> Post(Placemark placemark) {
+            if (ModelState.IsValid) {
+                unitOfWork.PlacemarkRepository.Insert(placemark);
+                if (unitOfWork.Save(out string message))
+                    return Ok(placemark);
+                else {
+                    Response.Headers.Add("XXX-DB-ERROR", "Invalid body");
+                    return BadRequest(new { Error = message }.ToString());
+                }
+            }
+            return BadRequest(placemark);
         }
     }
 }

@@ -16,10 +16,12 @@ namespace DAL {
             this.dbSet = context.Set<TEntity>();
         }
 
+        #region CRUD operations
+
         /// <summary>
         /// Get Entities that selected by many params especially "includingProps" param wich link entity-dependent props.
         /// </summary>
-        public async Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate,
+        public async Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate = null,
             string includingProps = "", int offset = 0, string orderByFields = "", string desc = "false") {
             Func<IQueryable<TEntity>, IQueryable<TEntity>> includes = DbContextHelper.GetNavigations<TEntity>(includingProps);
             IQueryable<TEntity> query = dbSet;
@@ -59,6 +61,34 @@ namespace DAL {
             return entity;
         }
 
+        public virtual void Insert(TEntity entity) {
+            dbSet.Add(entity);
+        }
+
+        public virtual TEntity Delete(object id) {
+            TEntity entityToDelete = dbSet.Find(id);
+            Delete(entityToDelete);
+            return entityToDelete;
+        }
+
+        public virtual TEntity Delete(TEntity entityToDelete) {
+            if (context.Entry(entityToDelete).State == EntityState.Detached) {
+                dbSet.Attach(entityToDelete);
+            }
+            dbSet.Remove(entityToDelete);
+            return entityToDelete;
+        }
+
+        public virtual void Update(TEntity entityToUpdate) {
+            dbSet.Attach(entityToUpdate);
+            context.Entry(entityToUpdate).State = EntityState.Modified;
+        }
+
+        #endregion
+
+
+        #region Service methods for CRUD operations
+
         private IOrderedEnumerable<TEntity> OrderByEntities(IQueryable<TEntity> query, string orderByFields, string desc) {
             var orderings = CreateOrderingList(orderByFields);
             if (orderings.Count == 0)
@@ -94,27 +124,6 @@ namespace DAL {
             return ordering;
         }
 
-        public virtual void Insert(TEntity entity) {
-            dbSet.Add(entity);
-        }
-
-        public virtual TEntity Delete(object id) {
-            TEntity entityToDelete = dbSet.Find(id);
-            Delete(entityToDelete);
-            return entityToDelete;
-        }
-
-        public virtual TEntity Delete(TEntity entityToDelete) {
-            if (context.Entry(entityToDelete).State == EntityState.Detached) {
-                dbSet.Attach(entityToDelete);
-            }
-            dbSet.Remove(entityToDelete);
-            return entityToDelete;
-        }
-
-        public virtual void Update(TEntity entityToUpdate) {
-            dbSet.Attach(entityToUpdate);
-            context.Entry(entityToUpdate).State = EntityState.Modified;
-        }
+        #endregion
     }
 }

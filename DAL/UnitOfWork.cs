@@ -1,9 +1,11 @@
-﻿using Models.Account;
+﻿using Microsoft.EntityFrameworkCore;
+using Models.Account;
 using Models.Event;
 using Models.Map;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace DAL {
     public class UnitOfWork {
@@ -73,8 +75,21 @@ namespace DAL {
             }
         }
 
-        public void Save() {
-            context.SaveChanges();
+        public bool Save(out string message) {
+            try {
+                context.SaveChanges();
+                message = "Success";
+                return true;
+            } catch (DbUpdateException e) {
+                var exceptionMessage = e.InnerException.Message;
+                if (exceptionMessage != null) {
+                    var pattern = new Regex("\r\n");
+                    message = pattern.Replace(exceptionMessage, " ");
+                } else {
+                    message = "Uknown error";
+                }
+                return false;
+            }
         }
 
         //private bool disposed = false;
