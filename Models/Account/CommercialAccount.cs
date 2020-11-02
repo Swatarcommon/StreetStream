@@ -9,7 +9,7 @@ namespace Models.Account {
         public long Id { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        [NavigationProperty]
+        [NavigationProperty(true)]
         public ICollection<Event.Event> Events { get; set; }
         public CommercialAccount() {
             Events = new List<Event.Event>();

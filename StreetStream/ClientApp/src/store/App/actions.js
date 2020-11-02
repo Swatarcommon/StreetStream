@@ -1,6 +1,6 @@
-export const changeisLoggedTrue = () => {
+export const changeisLogged = (flag) => {
     return {
-        type: 'CHANGE_ISLOGGED_TRUE',
-        payload: true
+        type: 'CHANGE_ISLOGGED',
+        payload: flag
     }
 }

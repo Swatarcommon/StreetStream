@@ -1,37 +1,37 @@
 import axios from "axios";
 import {SERVER_URL} from "../../config.json";
 
-const fetchForecastsRequest = () => {
+const fetchEventsRequest = () => {
     return {
-        type: 'FETCH_FORECASTS_REQUEST'
+        type: 'FETCH_EVENTS_REQUEST'
     }
 }
 
-const fetchForecastsSuccess = (forecasts) => {
+const fetchEventsSuccess = (events) => {
     return {
-        type: 'FETCH_FORECASTS_SUCCESS',
-        payload: forecasts
+        type: 'FETCH_EVENTS_SUCCESS',
+        payload: events
     }
 }
 
-const fetchForecastsFailure = (error) => {
+const fetchEventsFailure = (error) => {
     return {
-        type: 'FETCH_FORECASTS_FAILURE',
+        type: 'FETCH_EVENTS_FAILURE',
         payload: error
     }
 }
 
-export const fetchForecasts = () => {
+export const fetchEvents = () => {
     return (dispatch) => {
-        dispatch(fetchForecastsRequest());
-        axios.get(SERVER_URL + '/weatherforecast', {
+        dispatch(fetchEventsRequest());
+        axios.get(SERVER_URL + '/api/events?includingProps=commercialaccount,placemark', {
             mode: 'no-cors',
         })
             .then(response => {
-                const forecasts = response.data;
-                dispatch(fetchForecastsSuccess(forecasts));
+                const events = response.data;
+                dispatch(fetchEventsSuccess(events));
             }).catch(error => {
-            dispatch(fetchForecastsFailure(error.message));
+            dispatch(fetchEventsFailure(error.message));
         });
     }
 }
