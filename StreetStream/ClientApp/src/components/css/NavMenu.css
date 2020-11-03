@@ -5,8 +5,21 @@
     position: relative;
 }
 
+.bar{
+    background: rgb(249,249,249);
+    background: linear-gradient(45deg, rgba(249,249,249,1) 0%, rgba(238,238,238,1) 49%, rgba(244,249,255,1) 100%);
+}
+
+.toolbar {
+    -webkit-box-shadow: 0px 0px 64px 6px rgba(0,0,0,0.24);
+    -moz-box-shadow: 0px 0px 64px 6px rgba(0,0,0,0.24);
+    box-shadow: 0px 0px 64px 6px rgba(0,0,0,0.24);
+}
+
 .navbar {
-    background: white;
+    -webkit-box-shadow: 0px 0px 64px 6px rgba(0,0,0,0.12);
+    -moz-box-shadow: 0px 0px 64px 6px rgba(0,0,0,0.12);
+    box-shadow: 0px 0px 64px 6px rgba(0,0,0,0.12);
 }
 
 html {

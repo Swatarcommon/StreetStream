@@ -1,12 +1,15 @@
 import React, {Component} from 'react';
 import {Link} from "react-router-dom";
-
-export default class FetchData extends Component {
+import { Card, CardTitle, CardText, CardImg, CardImgOverlay } from 'reactstrap';
+import  SERVER_URL from '../config.json';
+export default class EventsList extends Component {
     componentWillMount() {
         this.loadEvents();
     }
 
-    static renderForecastsTable(events, setPosition) {
+    static renderForecastsTable(events) {
+        // let imgUrl = SERVER_URL + '/api/images/' + game.gameImages[0].imageNameNavigation.name + game.gameImages[0].imageNameNavigation.format;
+        let imgUrl = SERVER_URL + '/api/images/' + '1.jpg';
         return (
             <table className='table table-striped' aria-labelledby="tabelLabel">
                 <thead>
@@ -25,9 +28,18 @@ export default class FetchData extends Component {
                         <td>{event.duration}</td>
                         <td>{event.commercialAccount.email}</td>
                         <td>
-                            <Link className="text-dark" to={{pathname:'/', targetPlacemark:{x: event.placemark.x, y: event.placemark.y}}}>On Map</Link>
+                            <Link className="text-dark"  to={`/?x=${event.placemark.x}&y=${event.placemark.y}`}>On Map</Link>
                         </td>
                     </tr>
+                )}
+                {events.map(event =>
+                <Card inverse>
+                    <CardImg width="100%" src={imgUrl} alt="Card image cap" />
+                    <CardImgOverlay>
+                        <CardTitle>{event.name}</CardTitle>
+                        <CardText>Event date {event.date}</CardText>
+                    </CardImgOverlay>
+                </Card>
                 )}
                 </tbody>
             </table>
@@ -37,7 +49,7 @@ export default class FetchData extends Component {
     render() {
         let contents = this.props.loading === true
             ? <p><em>Loading...</em></p>
-            : FetchData.renderForecastsTable(this.props.events, this.props.setPosition);
+            : EventsList.renderForecastsTable(this.props.events);
 
         return (
             <div>

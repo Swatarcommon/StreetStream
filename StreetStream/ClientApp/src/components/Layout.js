@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {NavMenu} from './NavMenu';
+import {ToolsMenu} from "./ToolsMenu";
 
 export class Layout extends Component {
     static displayName = Layout.name;
@@ -7,10 +8,10 @@ export class Layout extends Component {
     render() {
         return (
             <div>
-                <NavMenu/>
                 <div className='main-container'>
                     {this.props.children}
                 </div>
+                <NavMenu/>
             </div>
         );
     }

@@ -3,11 +3,14 @@ import {connect} from 'react-redux';
 import {Map, Placemark, YMaps} from "react-yandex-maps";
 import {fetchPlacemarks, setPosition, setZoom} from "../../store/Map/actions";
 import '../css/Map.css';
+import {ToolsMenu} from "../ToolsMenu";
+import {MapTools} from "../MapTools";
 
 class MapContainer extends Component {
 
-    componentWillMount() {
+    componentDidMount() {
         this.loadPlacemarks();
+        this.loadTargetPlacemark();
     }
 
     render() {
@@ -16,7 +19,11 @@ class MapContainer extends Component {
                 ns: 'use-load-option',
                 load:
                     'control.ZoomControl,control.FullscreenControl,geoObject.addon.balloon',
-            }}>
+            }} className={"map-container"}>
+                <ToolsMenu>
+                    <MapTools setPosition={this.props.setPosition} setZoom={this.props.setZoom}
+                              zoom={this.props.mapState.zoom}/>
+                </ToolsMenu>
                 <Map state={this.props.mapState} className={'interactive-map'}>
                     {this.props.placeMarks.map(placeMark =>
                         <Placemark
@@ -28,25 +35,19 @@ class MapContainer extends Component {
                         />
                     )}
                 </Map>
-                <br/>
-                <div className={'map-control-panel'}>
-                    <button onClick={() => {
-                        this.props.setZoom(this.props.mapState.zoom)
-                    }}>
-                        Toggle map zoom
-                    </button>
-                    <button onClick={() => {
-                        this.props.setPosition()
-                    }}>
-                        Set position
-                    </button>
-                </div>
             </YMaps>
         )
     }
 
     async loadPlacemarks() {
         this.props.fetchPlacemarks();
+    }
+
+    async loadTargetPlacemark() {
+        const targetMarkX = new URLSearchParams(this.props.location.search).get("x");
+        const targetMarkY = new URLSearchParams(this.props.location.search).get("y");
+        if (targetMarkX !== null && targetMarkY !== null)
+            this.props.setPosition({x: targetMarkX, y: targetMarkY});
     }
 }
 

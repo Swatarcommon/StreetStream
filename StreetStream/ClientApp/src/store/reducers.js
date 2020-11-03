@@ -1,6 +1,6 @@
 import {combineReducers} from "redux";
 import {appReducer} from "./App/reducer";
-import {fetchDataReducer} from "./FetchData/reducer";
+import {fetchDataReducer} from "./EventsList/reducer";
 import {mapReducer} from "./Map/reducer";
 
 export default combineReducers({

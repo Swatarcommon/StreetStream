@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using DAL;
 using Microsoft.EntityFrameworkCore;
+using Azure.Storage.Blobs;
+using DAL.Services;
 
 namespace StreetStream {
     public class Startup {
@@ -29,6 +31,9 @@ namespace StreetStream {
             services.AddControllers().AddNewtonsoftJson(options =>
                         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
+
+            services.AddSingleton(x => new BlobServiceClient(Configuration.GetValue<string>("AzureBlobStorageConnectionString")));
+            services.AddSingleton<IBlobService, BlobService>();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration => {

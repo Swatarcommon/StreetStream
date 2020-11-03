@@ -1,16 +1,18 @@
 import React, {Component} from 'react';
-import {Route} from 'react-router';
+import {Route, Switch} from 'react-router';
 import {Layout} from './components/Layout';
-import FetchDataContainer from './components/containers/FetchDataContainer';
+import EventsListContainer from './components/containers/EventsListContainer';
 import './custom.css'
-import Map from "./components/Map";
+import MapContainer from "./components/containers/MapContainer";
 
 export default class App extends Component {
     render() {
         return (
             <Layout>
-                <Route exact path='/' component={Map}/>
-                <Route path='/fetch-data' component={FetchDataContainer}/>
+                <Switch>
+                    <Route exact path='/' component={MapContainer}/>
+                    <Route path='/events' component={EventsListContainer}/>
+                </Switch>
             </Layout>
         );
     };

@@ -23,24 +23,23 @@ export class NavMenu extends Component {
 
   render () {
     return (
-      <header>
-        <Navbar className="navbar-expand-sm navbar-toggleable-sm border-bottom fixed-bottom navbar" light>
+      <footer>
+        <Navbar className="navbar-expand-md navbar-toggleable-sm border-bottom fixed-bottom navbar bar" light>
           <Container>
-            <NavbarBrand tag={Link} to="/">StreetStream</NavbarBrand>
             <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
-            <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed} navbar>
+            <Collapse className="d-lg-block-flex flex-lg-fill justify-content-center" isOpen={!this.state.collapsed} navbar>
               <ul className="navbar-nav flex-grow">
                 <NavItem>
                   <NavLink tag={Link} className="text-dark" to="/">Map</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink tag={Link} className="text-dark" to="/fetch-data">Events</NavLink>
+                  <NavLink tag={Link} className="text-dark" to="/events">Events</NavLink>
                 </NavItem>
               </ul>
             </Collapse>
           </Container>
         </Navbar>
-      </header>
+      </footer>
     );
   }
 }
