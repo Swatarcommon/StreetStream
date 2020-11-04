@@ -1,10 +1,14 @@
 /* Provide sufficient contrast against white background */
+@font-face {
+  font-family: Lato_Custom; /* Имя шрифта */
+  src: url(/fonts/Lato-Black.ttf); /* Путь к файлу со шрифтом */
+}
 html{
   padding: 0;
   margin: 0;
+  font-family: Lato_Custom !important;
 }
 body{
-  font-family: Lato !important;
   padding: 0;
   margin: 0;
   background-size: 100%
@@ -19,6 +23,5 @@ code {
 }
 
 .btn-outline-dark {
-  font-family: Lato !important;
-  font-weight: bold !important;
+  font-family: Lato_Custom !important;
 }

@@ -19,15 +19,15 @@ namespace StreetStream {
         readonly string MyAllowSpecific = "_myAllowSpecificForDev";
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
-            services.AddCors(options => {
-                options.AddPolicy(name: MyAllowSpecific,
-                                  builder => {
-                                      builder.WithOrigins("http://localhost:3000");
-                                  });
-            });
             services.AddDbContext<StreetStreamDbContext>();
             services.AddScoped<StreetStreamDbContext>();
             services.AddScoped<UnitOfWork>();
+            services.AddCors(options => {
+                options.AddPolicy(name: MyAllowSpecific,
+                                  builder => {
+                                      builder.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
+                                  });
+            });
             services.AddControllers().AddNewtonsoftJson(options =>
                         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
@@ -48,12 +48,11 @@ namespace StreetStream {
             } else {
                 app.UseExceptionHandler("/Error");
             }
-
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
-            app.UseCors(MyAllowSpecific);
-            app.UseRouting();
 
+            app.UseRouting();
+            app.UseCors(MyAllowSpecific);
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllerRoute(
                     name: "default",

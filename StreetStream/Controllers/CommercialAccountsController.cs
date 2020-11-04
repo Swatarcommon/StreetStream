@@ -2,6 +2,7 @@
 using DAL;
 using Microsoft.AspNetCore.Mvc;
 using Models.Account;
+using Newtonsoft.Json.Linq;
 
 namespace StreetStream.Controllers {
     [Route("api/[controller]")]
@@ -21,6 +22,25 @@ namespace StreetStream.Controllers {
                 return BadRequest(commecialAccounts.Result);
             }
             return Ok(commecialAccounts.Result);
+        }
+
+        [HttpPost]
+        public ActionResult<CommercialAccount> Post([FromBody] JObject item) {
+            var email = item["email"].ToObject<string>();
+            var password = item["password"].ToObject<string>();
+            var verificationCode = item["verificationCode"].ToObject<string>();
+            string code = "";
+            code = Request.Cookies["verificationCode"];
+       
+            //unitOfWork.CommercialAccountRepository.Insert(commercialAccount);
+            //if (unitOfWork.Save(out string message))
+            //    return Ok(commercialAccount);
+            //else {
+            //    Response.Headers.Add("XXX-DB-ERROR", "Invalid body");
+            //    return BadRequest(new { Error = message }.ToString());
+            //}
+
+            return BadRequest();
         }
     }
 }

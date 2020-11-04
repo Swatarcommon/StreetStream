@@ -1,0 +1,14 @@
+.authorization-container{
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    margin: -125px 0 0 -130px;
+}
+
+html{
+    height: 100%;
+}
+
+.disable{
+    display: none;
+}

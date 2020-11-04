@@ -1,6 +1,5 @@
 import axios from "axios";
 import {SERVER_URL} from "../../config.json";
-import {setPosition} from "../Map/actions";
 
 const fetchEventsRequest = () => {
     return {
@@ -31,7 +30,6 @@ export const fetchEvents = () => {
             .then(response => {
                 const events = response.data;
                 dispatch(fetchEventsSuccess(events));
-                dispatch(setPosition({x:50,y:40}));
             }).catch(error => {
             dispatch(fetchEventsFailure(error.message));
         });
