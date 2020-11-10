@@ -31,7 +31,7 @@ namespace StreetStream {
             services.AddControllers().AddNewtonsoftJson(options =>
                         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
-
+            services.AddSingleton<IRecaptchaService, GoogleRecaptchaService>();
             services.AddSingleton(x => new BlobServiceClient(Configuration.GetValue<string>("AzureBlobStorageConnectionString")));
             services.AddSingleton<IBlobService, BlobService>();
 
@@ -45,6 +45,7 @@ namespace StreetStream {
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
+                app.UseCors(MyAllowSpecific);
             } else {
                 app.UseExceptionHandler("/Error");
             }
@@ -52,7 +53,6 @@ namespace StreetStream {
             app.UseSpaStaticFiles();
 
             app.UseRouting();
-            app.UseCors(MyAllowSpecific);
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllerRoute(
                     name: "default",

@@ -7,11 +7,12 @@ using System.IO;
 
 namespace DAL {
     public class StreetStreamDbContext : DbContext {
-        IConfigurationRoot configuration;
+        private IConfigurationRoot configuration;
         public StreetStreamDbContext(DbContextOptions<StreetStreamDbContext> options)
           : base(options) {
             Database.EnsureCreated();
         }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
             configuration = new ConfigurationBuilder()
                .SetBasePath(Directory.GetCurrentDirectory())
@@ -67,11 +68,13 @@ namespace DAL {
 
             modelBuilder.Entity<CommercialAccount>(entity => {
                 entity.ToTable("CommercialAccounts")
-                      .HasIndex(account => account.Id);
+                      .HasIndex(account => account.Email).IsUnique();
                 entity.HasMany(evnt => evnt.Events)
                       .WithOne(cmrAcc => cmrAcc.CommercialAccount)
                       .IsRequired()
                       .OnDelete(DeleteBehavior.Restrict);
+                entity.Property(account => account.Id)
+                       .ValueGeneratedOnAdd();
                 entity.Property(account => account.Password)
                       .HasMaxLength(50)
                       .IsRequired();
@@ -87,7 +90,9 @@ namespace DAL {
 
             modelBuilder.Entity<RegularAccount>(entity => {
                 entity.ToTable("RegularAccounts")
-                .HasIndex(rglAcc => rglAcc.Id);
+                .HasIndex(rglAcc => rglAcc.Email).IsUnique();
+                entity.Property(rglAcc => rglAcc.Id)
+                       .ValueGeneratedOnAdd();
             });
 
             modelBuilder.Entity<Image>(entity => {

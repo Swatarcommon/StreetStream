@@ -41,7 +41,7 @@ namespace StreetStream.Controllers {
             if (ModelState.IsValid) {
                 unitOfWork.PlacemarkRepository.Insert(placemark);
                 if (unitOfWork.Save(out string message))
-                    return Ok(placemark);
+                    return LocalRedirectPermanentPreserveMethod("");
                 else {
                     Response.Headers.Add("XXX-DB-ERROR", "Invalid body");
                     return BadRequest(new { Error = message }.ToString());

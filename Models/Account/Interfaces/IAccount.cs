@@ -7,7 +7,7 @@ using System.Text;
 namespace Models.Account.Interfaces {
     public interface IAccount {
         long Id { get; set; }
-        string Email { get; set; }
-        string Password { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
 }

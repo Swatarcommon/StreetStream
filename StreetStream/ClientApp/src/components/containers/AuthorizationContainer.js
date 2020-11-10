@@ -1,12 +1,14 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import Authorization from "../Authorization";
-import {sendVerificationCode, signUp} from "../../store/Authorization/actions";
+import {resetErrors, signUp} from "../../store/Authorization/actions";
 
 
 class AuthorizationContainer extends Component {
     render() {
-        return (<Authorization sendVerificationCode={this.props.sendVerificationCode} signUp={this.props.signUp}/>)
+        return (<Authorization logged={this.props.logged} resetErrors={this.props.resetErrors}
+                               errorMsg={this.props.errorMsg}
+                               signUp={this.props.signUp}/>)
     }
 }
 
@@ -14,13 +16,14 @@ const putStateToProps = (state, ownProps) => {
     return {
         loading: state.authorization.loading,
         accountInfo: state.authorization.accountInfo,
-        errorMsg: state.authorization.errorMsg
+        errorMsg: state.authorization.errorMsg,
+        success: state.authorization.logged
     };
 }
 
 const linkActionsToProps = {
     signUp,
-    sendVerificationCode
+    resetErrors
 }
 
 export default connect(putStateToProps, linkActionsToProps)(AuthorizationContainer);

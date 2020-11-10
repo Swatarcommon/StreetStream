@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using DAL;
+using DAL.Services;
 using Microsoft.AspNetCore.Mvc;
 using Models.Account;
 using Newtonsoft.Json.Linq;
@@ -8,9 +11,11 @@ namespace StreetStream.Controllers {
     [Route("api/[controller]")]
     [ApiController]
     public class CommercialAccountsController : ControllerBase {
-        UnitOfWork unitOfWork;
-        public CommercialAccountsController(UnitOfWork unitOfWork) {
+        private UnitOfWork unitOfWork;
+        private readonly IRecaptchaService recaptcha;
+        public CommercialAccountsController(UnitOfWork unitOfWork, IRecaptchaService recaptcha) {
             this.unitOfWork = unitOfWork;
+            this.recaptcha = recaptcha;
         }
 
         [HttpGet]
@@ -25,22 +30,19 @@ namespace StreetStream.Controllers {
         }
 
         [HttpPost]
-        public ActionResult<CommercialAccount> Post([FromBody] JObject item) {
-            var email = item["email"].ToObject<string>();
-            var password = item["password"].ToObject<string>();
-            var verificationCode = item["verificationCode"].ToObject<string>();
-            string code = "";
-            code = Request.Cookies["verificationCode"];
-       
-            //unitOfWork.CommercialAccountRepository.Insert(commercialAccount);
-            //if (unitOfWork.Save(out string message))
-            //    return Ok(commercialAccount);
-            //else {
-            //    Response.Headers.Add("XXX-DB-ERROR", "Invalid body");
-            //    return BadRequest(new { Error = message }.ToString());
-            //}
-
-            return BadRequest();
+        public async Task<ActionResult<CommercialAccount>> Post(SignUpViewModel<CommercialAccount> commercialAccount) {
+            var captchaResponse = await recaptcha.Validate(commercialAccount.Token);
+            unitOfWork.CommercialAccountRepository.Insert(commercialAccount.Account);
+            if (!captchaResponse.Success) {
+                Response.Headers.Add("XXX-CAPTCHA-ERROR", "You'r bot, asshole!");
+                return BadRequest(new { Error = "You'r bot, asshole!" }.ToString());
+            }
+            if (unitOfWork.Save(out string message))
+                return Ok(commercialAccount);
+            else {
+                Response.Headers.Add("XXX-DB-ERROR", "Invalid body");
+                return BadRequest(new { Error = message }.ToString());
+            }
         }
     }
 }

@@ -9,7 +9,7 @@ const signUpRequest = () => {
 
 const signUpSuccess = (accountInfo) => {
     return {
-        type: 'FETCH_SIGNUP_REQUEST',
+        type: 'FETCH_SIGNUP_SUCCESS',
         payload: accountInfo
     }
 }
@@ -21,58 +21,44 @@ const signUpFailure = (error) => {
     }
 }
 
-export const signUp = (account, code) => {
+export const resetErrors = () => {
+    return {
+        type: 'RESET_ERRORS',
+        payload: ''
+    }
+}
+
+export const signUp = (account, token) => {
     return (dispatch) => {
         dispatch(signUpRequest());
         axios.post(SERVER_URL + '/api/commercialaccounts', {
-            email: account.email,
-            password: account.password,
-            verificationCode: account.verificationCode
+            account: {
+                email: account.email,
+                password: account.password
+            },
+            token: token
         }, {
             mode: 'no-cors',
-        })
-            .then(response => {
+        }).then(response => {
+            if(response.status === 400){
+                dispatch(signUpFailure(response.data));
+                setTimeout(() => {
+                    dispatch(resetErrors());
+                }, 5000);
+            }else{
                 const accountInfo = response.data;
                 dispatch(signUpSuccess(accountInfo));
-            }).catch(error => {
-            dispatch(signUpFailure(error.message));
-        });
-    }
-}
-
-
-const verificationCodeRequest = () => {
-    return {
-        type: 'FETCH_VERIFICATION_CODE_REQUEST'
-    }
-}
-
-const verificationCodeSuccess = () => {
-    return {
-        type: 'FETCH_VERIFICATION_CODE_REQUEST',
-    }
-}
-
-const verificationCodeFailure = (error) => {
-    return {
-        type: 'FETCH_VERIFICATION_CODE_FAILRUE',
-        payload: error
-    }
-}
-
-export const sendVerificationCode = (account) => {
-    return (dispatch) => {
-        dispatch(verificationCodeRequest());
-        axios.post(SERVER_URL + '/api/confirmemail', {
-            email: account.email,
-            password: account.password,
-        }, {
-            mode: 'no-cors',
-        })
-            .then(response => {
-                dispatch(verificationCodeSuccess());
-            }).catch(error => {
-            dispatch(verificationCodeFailure(error.message));
+                window.location.href = '/';
+            }
+        }).catch(error => {
+            if (error.message.replace(/[\D]+/g, '') === '400') {
+                dispatch(signUpFailure('This email already exists'));
+            } else {
+                dispatch(signUpFailure('Something went wrong :('));
+            }
+            setTimeout(() => {
+                dispatch(resetErrors());
+            }, 5000);
         });
     }
 }
