@@ -18,7 +18,6 @@ function SignUp(props) {
         console.log("TOKEN",token);
         recaptchaRef.current.reset();
         props.signUp(accountInfo,token);
-        // apply to form data
     }
 
     return (

@@ -8,9 +8,8 @@ namespace StreetStream.Controllers {
     [ApiController]
     public class CategoriesController : ControllerBase {
         UnitOfWork unitOfWork;
-        public CategoriesController(UnitOfWork unitOfWork) {
+        public CategoriesController(UnitOfWork unitOfWork) =>
             this.unitOfWork = unitOfWork;
-        }
 
         [HttpGet]
         public ActionResult<IEnumerable<Category>> Get(string orderByFields, string desc = "false", long minid = 0, long maxid = 1, int offset = 2, string includingProps = "") {

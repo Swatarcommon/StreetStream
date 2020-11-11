@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Models.Event {
     public class CategoryEvent {
-        public long EventId { get; set; }
+        public long EventId { get; init; }
         public long CategoryId { get; set; }
         [NavigationProperty(true)]
         public Event Event { get; set; }

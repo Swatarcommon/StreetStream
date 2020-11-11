@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Models.Account.Interfaces {
     public interface IAccount {
-        long Id { get; set; }
+        long Id { get; init; }
         public string Email { get; set; }
         public string Password { get; set; }
     }

@@ -11,20 +11,15 @@ namespace Models.CustomAttributes {
         public Type EndedNavType { get; set; }
         public bool IsManyToMany { get; set; }
 
-        public NavigationPropertyAttribute() {
-        }
+        public NavigationPropertyAttribute() { }
 
-        public NavigationPropertyAttribute(Type obj) {
-            EndedNavType = obj;
-        }
+        public NavigationPropertyAttribute(Type obj) =>
+            (EndedNavType) = (obj);
 
-        public NavigationPropertyAttribute(bool IsManyToMany) {
-            this.IsManyToMany = IsManyToMany;
-        }
+        public NavigationPropertyAttribute(bool isManyToMany) =>
+            (IsManyToMany) = (isManyToMany);
 
-        public NavigationPropertyAttribute(Type obj, bool IsManyToMany) {
-            EndedNavType = obj;
-            this.IsManyToMany = IsManyToMany;
-        }
+        public NavigationPropertyAttribute(Type obj, bool isManyToMany) =>
+            (EndedNavType, IsManyToMany) = (obj, isManyToMany);
     }
 }

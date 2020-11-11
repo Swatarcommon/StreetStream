@@ -40,22 +40,11 @@ export const signUp = (account, token) => {
         }, {
             mode: 'no-cors',
         }).then(response => {
-            if(response.status === 400){
-                dispatch(signUpFailure(response.data));
-                setTimeout(() => {
-                    dispatch(resetErrors());
-                }, 5000);
-            }else{
-                const accountInfo = response.data;
-                dispatch(signUpSuccess(accountInfo));
-                window.location.href = '/';
-            }
+            const accountInfo = response.data;
+            dispatch(signUpSuccess(accountInfo));
+            window.location.href = '/';
         }).catch(error => {
-            if (error.message.replace(/[\D]+/g, '') === '400') {
-                dispatch(signUpFailure('This email already exists'));
-            } else {
-                dispatch(signUpFailure('Something went wrong :('));
-            }
+            dispatch(signUpFailure(error.response.data.errorMsg));
             setTimeout(() => {
                 dispatch(resetErrors());
             }, 5000);

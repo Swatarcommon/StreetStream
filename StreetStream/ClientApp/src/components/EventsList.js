@@ -13,14 +13,23 @@ const EventItem = (props) => {
         y: 0,
         opacity: 1,
         from: {opacity: 0},
-        config: {duration: 1200, mass: 3, tension: 100, friction: 26}
+        config: {duration: 950, mass: 3, tension: 100, friction: 26}
     }));
+
+    const [animPropsText, setAnimText] = useSpring(() => ({
+        opacity: 1,
+        from: {opacity: 0},
+        config: {duration: 1000, mass: 3, tension: 100, friction: 26}
+    }));
+
     return (
         <animated.div
             style={animProps}>
             <Card inverse style={{width: 300}} className='m-2 event-card'>
                 <CardImg width="100%" src={imgUrl} alt="Card image"/>
                 <CardImgOverlay>
+                    <animated.div
+                        style={animPropsText}>
                     <CardTitle>{props.event.name}</CardTitle>
                     <CardText>Event date {props.event.date}</CardText>
                     <CardText>
@@ -33,6 +42,7 @@ const EventItem = (props) => {
                             Details
                         </Link>
                     </CardText>
+                </animated.div>
                 </CardImgOverlay>
             </Card>
         </animated.div>
@@ -47,7 +57,7 @@ export default class EventsList extends Component {
 
     static renderForecastsTable(events) {
         return (
-            <div className='d-flex justify-content-sm-around flex-wrap justify-content-center'>
+            <div id='event-list' className='d-flex justify-content-sm-around flex-wrap justify-content-center'>
                 {events.map(event =>
                     <EventItem event={event}/>
                 )}

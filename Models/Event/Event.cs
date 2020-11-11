@@ -9,11 +9,10 @@ using System.Text.Json.Serialization;
 
 namespace Models.Event {
     public class Event {
-        public Event() {
+        public Event() =>
             CategoryEvent = new List<CategoryEvent>();
-        }
 
-        public long Id { get; set; }
+        public long Id { get; init; }
         [MinLength(3)]
         public string Name { get; set; }
         public DateTime Date { get; set; }

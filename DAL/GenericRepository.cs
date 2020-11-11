@@ -50,7 +50,7 @@ namespace DAL {
         /// <summary>
         /// Get Entities that selected by some "predicate"(c=>c.id == id for example) especially "includingProps" param wich link entity-dependent props.
         /// </summary>
-        public async Task<TEntity> GetByAsync(Expression<Func<TEntity, bool>> predicate, string includingProps) {
+        public async Task<TEntity> GetByAsync(Expression<Func<TEntity, bool>> predicate, string includingProps = "") {
             Func<IQueryable<TEntity>, IQueryable<TEntity>> includes = DbContextHelper.GetNavigations<TEntity>(includingProps);
             IQueryable<TEntity> query = dbSet;
             if (includes != null) {

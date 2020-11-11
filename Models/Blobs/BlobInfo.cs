@@ -5,10 +5,8 @@ using System.Text;
 
 namespace Models.Blobs {
     public class BlobInfo {
-        public BlobInfo(Stream content, string contentType) {
-            Content = content;
-            ContentType = contentType;
-        }
+        public BlobInfo(Stream content, string contentType) =>
+         (Content, ContentType) = (content, contentType);
 
         public Stream Content {
             get;

@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace Models.Map {
     public class Placemark {
-        public long Id { get; set; }
+        public long Id { get; init; }
         public double X { get; set; }
         public double Y { get; set; }
         public long EventId { get; set; }

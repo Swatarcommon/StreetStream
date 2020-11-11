@@ -6,10 +6,10 @@ using System.Text;
 
 namespace Models.Event {
     public class Category {
-        public Category() {
+        public Category() =>
             CategoryEvent = new List<CategoryEvent>();
-        }
-        public long Id { get; set; }
+
+        public long Id { get; init; }
         [MinLength(1)]
         public string Name { get; set; }
         [NavigationProperty]

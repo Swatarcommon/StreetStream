@@ -6,13 +6,12 @@ using System.Text;
 
 namespace Models.Account {
     public class CommercialAccount : IAccount {
-        public long Id { get; set; }
+        public long Id { get; init; }
         public string Email { get; set; }
         public string Password { get; set; }
         [NavigationProperty(true)]
         public ICollection<Event.Event> Events { get; set; }
-        public CommercialAccount() {
-            Events = new List<Event.Event>();
-        }
+        public CommercialAccount() =>
+            (Events) = (new List<Event.Event>());
     }
 }

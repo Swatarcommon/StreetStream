@@ -12,10 +12,9 @@ namespace StreetStream.Controllers {
     public class ImagesController : ControllerBase {
         private readonly IBlobService _blobService;
 
-        public ImagesController(IBlobService blobService) {
+        public ImagesController(IBlobService blobService) =>
             _blobService = blobService;
-        }
-
+        
         [HttpGet]
         public async Task<IActionResult> doGet() {
             return Ok(await _blobService.ListBlobAsync());

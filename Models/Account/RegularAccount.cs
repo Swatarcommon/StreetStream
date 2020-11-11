@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Models.Account {
     public class RegularAccount : IAccount {
-        public long Id { get; set; }
+        public long Id { get; init; }
         [MinLength(3)]
         public string Email { get; set; }
         [MinLength(8)]

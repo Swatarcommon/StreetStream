@@ -75,20 +75,17 @@ namespace DAL {
             }
         }
 
-        public bool Save(out string message) {
+        public void Save() {
             try {
                 context.SaveChanges();
-                message = "Success";
-                return true;
             } catch (DbUpdateException e) {
                 var exceptionMessage = e.InnerException.Message;
                 if (exceptionMessage != null) {
                     var pattern = new Regex("\r\n");
-                    message = pattern.Replace(exceptionMessage, " ");
+                    Console.WriteLine(pattern.Replace(exceptionMessage, " "));
                 } else {
-                    message = "Uknown error";
+                    Console.WriteLine("Uknown error");
                 }
-                return false;
             }
         }
 

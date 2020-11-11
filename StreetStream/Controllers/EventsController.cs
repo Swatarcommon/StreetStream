@@ -10,9 +10,9 @@ namespace StreetStream.Controllers {
     public class EventsController : ControllerBase {
         UnitOfWork unitOfWork;
 
-        public EventsController(UnitOfWork unitOfWork) {
+        public EventsController(UnitOfWork unitOfWork) =>
             this.unitOfWork = unitOfWork;
-        }
+
 
         [HttpGet]
         public ActionResult<IEnumerable<Event>> Get(string orderByFields = "", string desc = "false", long minid = 0, long maxid = Int64.MaxValue, int offset = 0, string includingProps = "") {
