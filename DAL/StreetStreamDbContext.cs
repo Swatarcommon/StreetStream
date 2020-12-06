@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Models.Account;
+using Models.Authenticate;
 using Models.Event;
 using Models.Map;
 using System.IO;
@@ -73,6 +74,8 @@ namespace DAL {
                       .WithOne(cmrAcc => cmrAcc.CommercialAccount)
                       .IsRequired()
                       .OnDelete(DeleteBehavior.Restrict);
+                entity.HasMany(refToken => refToken.RefreshTokens)
+                       .WithOne(cmrAcc => cmrAcc.CommercialAccount);
                 entity.Property(account => account.Id)
                        .ValueGeneratedOnAdd();
                 entity.Property(account => account.Password)
@@ -81,6 +84,20 @@ namespace DAL {
                 entity.Property(account => account.Email)
                       .HasMaxLength(255)
                       .IsRequired();
+            });
+
+            modelBuilder.Entity<RefreshToken>(entity => {
+                entity.ToTable("RefreshTokens")
+                .HasIndex(refToken => refToken.Id);
+                entity.HasOne(refToken => refToken.CommercialAccount)
+                    .WithMany(evt => evt.RefreshTokens);
+                entity.Property(refToken => refToken.Token).IsRequired();
+                entity.Property(refToken => refToken.Expires).IsRequired();
+                entity.Property(refToken => refToken.Created).IsRequired();
+                entity.Property(refToken => refToken.CreatedByIp).IsRequired();
+                entity.Property(refToken => refToken.Revoked);
+                entity.Property(refToken => refToken.RevokedByIp);
+                entity.Property(refToken => refToken.ReplacedByToken);
             });
 
             modelBuilder.Entity<Placemark>(entity => {

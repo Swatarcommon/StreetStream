@@ -8,6 +8,7 @@
     box-shadow: 0px 10px 10px -10px rgba(0, 0, 0, 0.4);
     padding: 0.5vh;
     transition: ease-in-out 0.3s;
+    max-width: 300px;
 }
 .event-card:hover{
     box-shadow: 0px 10px 20px 0px rgba(0, 0, 0, 0.5);

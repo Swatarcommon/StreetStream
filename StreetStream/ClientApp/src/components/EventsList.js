@@ -30,19 +30,19 @@ const EventItem = (props) => {
                 <CardImgOverlay>
                     <animated.div
                         style={animPropsText}>
-                    <CardTitle>{props.event.name}</CardTitle>
-                    <CardText>Event date {props.event.date}</CardText>
-                    <CardText>
-                        <Link className="text-light btn btn-dark"
-                              to={`/?x=${props.event.placemark.x}&y=${props.event.placemark.y}`}>
-                            On Map
-                        </Link>
-                        <Link className="text-light btn btn-dark"
-                              to={`/events/${props.event.id}`}>
-                            Details
-                        </Link>
-                    </CardText>
-                </animated.div>
+                        <CardTitle>{props.event.name}</CardTitle>
+                        <CardText>Event date {props.event.date}</CardText>
+                        <CardText>
+                            <Link className="text-light btn btn-dark"
+                                  to={`/?x=${props.event.placemark.x}&y=${props.event.placemark.y}`}>
+                                On Map
+                            </Link>
+                            <Link className="text-light btn btn-dark"
+                                  to={`/events/${props.event.id}`}>
+                                Details
+                            </Link>
+                        </CardText>
+                    </animated.div>
                 </CardImgOverlay>
             </Card>
         </animated.div>
@@ -55,7 +55,7 @@ export default class EventsList extends Component {
         this.loadEvents();
     }
 
-    static renderForecastsTable(events) {
+    static renderEventsTable(events) {
         return (
             <div id='event-list' className='d-flex justify-content-sm-around flex-wrap justify-content-center'>
                 {events.map(event =>
@@ -68,8 +68,8 @@ export default class EventsList extends Component {
     render() {
         let contents = this.props.loading
             ? <div className='preload'><img src="PreLoad.svg" width="150"
-                        className="d-inline-block align-top" alt="Preload"/></div>
-            : EventsList.renderForecastsTable(this.props.events);
+                                            className="d-inline-block align-top" alt="Preload"/></div>
+            : EventsList.renderEventsTable(this.props.events);
 
         return (
             <div>

@@ -74,7 +74,6 @@ namespace DAL {
                 return imageRepository;
             }
         }
-
         public void Save() {
             try {
                 context.SaveChanges();

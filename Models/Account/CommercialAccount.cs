@@ -1,8 +1,10 @@
 ﻿using Models.Account.Interfaces;
+using Models.Authenticate;
 using Models.CustomAttributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Models.Account {
     public class CommercialAccount : IAccount {
@@ -11,7 +13,10 @@ namespace Models.Account {
         public string Password { get; set; }
         [NavigationProperty(true)]
         public ICollection<Event.Event> Events { get; set; }
+        [JsonIgnore]
+        public List<RefreshToken> RefreshTokens { get; set; }
+
         public CommercialAccount() =>
-            (Events) = (new List<Event.Event>());
+            (Events, RefreshTokens) = (new List<Event.Event>(), new List<RefreshToken>());
     }
 }

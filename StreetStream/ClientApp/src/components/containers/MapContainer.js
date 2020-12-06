@@ -26,12 +26,12 @@ class MapContainer extends Component {
                 </ToolsMenu>
                 <Map state={this.props.mapState} className={'interactive-map'}>
                     {this.props.placeMarks.map(placeMark =>
-                        <Placemark
-                            defaultGeometry={[placeMark.x, placeMark.y]}
-                            properties={{
-                                balloonContentBody:
-                                    `This is balloon coordinate is [${placeMark.x},${placeMark.y}]`,
-                            }}
+                        <Placemark key={placeMark.x + placeMark.y}
+                                   defaultGeometry={[placeMark.x, placeMark.y]}
+                                   properties={{
+                                       balloonContentBody:
+                                           `This is balloon coordinate is [${placeMark.x},${placeMark.y}]`,
+                                   }}
                         />
                     )}
                 </Map>
@@ -52,7 +52,7 @@ class MapContainer extends Component {
 }
 
 const putStateToProps = (state, ownProps) => {
-    console.log(state.map.placeMarks);
+    console.log("MAP_STATE_LOGGED = ", state.app.isLogged);
     return {
         mapState: {
             center: state.map.center,
