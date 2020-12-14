@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models.Account;
-using Models.Account.Interfaces;
 using Models.Authenticate;
 using System;
 using System.Collections.Generic;
@@ -35,8 +34,8 @@ namespace StreetStream.Controllers {
         [AllowAnonymous]
         [HttpPost("refresh-token")]
         public IActionResult RefreshToken() {
-            var refreshToken = Request.Cookies["refreshToken"];
-            var response = _userService.RefreshToken(refreshToken, ipAddress());
+                var refreshToken = Request.Cookies["refreshToken"];
+            var response = _userService.RefreshToken(refreshToken, ipAddress(),HttpContext);
 
             if (response == null)
                 return Unauthorized(new { errorMsg = "Invalid token" });
@@ -68,6 +67,7 @@ namespace StreetStream.Controllers {
             return Ok();
         }
 
+        [Authorize]
         [HttpGet("profile")]
         public IActionResult Profile() {
             if (HttpContext.Session.Keys.Contains("user_id")) {
@@ -77,7 +77,7 @@ namespace StreetStream.Controllers {
                         return Ok(unitOfWork.CommercialAccountRepository.GetAsync(account => account.Id == id, "Events,CategoryEvent,Placemark,Category").Result);
                     }
                     if (role == "regular") {
-                        return Ok(unitOfWork.CommercialAccountRepository.GetAsync(account => account.Id == id, "Events,CategoryEvent,Placemark,Category").Result);
+                        return Ok(unitOfWork.RegularAccountRepository.GetAsync(account => account.Id == id, "").Result);
                     }
                     return BadRequest();
                 }

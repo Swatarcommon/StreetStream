@@ -1,6 +1,7 @@
 import axios from "axios";
 import {SERVER_URL} from "../../config.json";
-
+import {refreshToken} from "../App/actions";
+const TOKEN = 'Bearer ' + window.localStorage.getItem("access_token");
 const fetchEventsRequest = () => {
     return {
         type: 'FETCH_EVENTS_REQUEST'
@@ -25,13 +26,23 @@ export const fetchEvents = () => {
     return (dispatch) => {
         dispatch(fetchEventsRequest());
         axios.get(SERVER_URL + '/api/events?includingProps=commercialaccount,placemark', {
-            mode: 'no-cors',
+            headers: {
+                authorization: TOKEN
+            }
         })
             .then(response => {
                 const events = response.data;
                 dispatch(fetchEventsSuccess(events));
             }).catch(error => {
-            dispatch(fetchEventsFailure(error.message));
+                if(error.response !== undefined){
+                    if(error.response.status === 401){
+                        dispatch(fetchEventsFailure("Unauthorized"));
+                        dispatch(refreshToken());
+                    }else {
+                        dispatch(fetchEventsFailure(error.message));
+                    }
+                }
+            dispatch(fetchEventsFailure("Uknown error :("));
         });
     }
 }

@@ -3,7 +3,7 @@ const defaultState = {
         ? JSON.parse(window.localStorage.getItem("isLogged"))
         : false,
     role: (window.localStorage.getItem("role") !== undefined && window.localStorage.getItem("role") !== null)
-        ? JSON.parse(window.localStorage.getItem("role"))
+        ? window.localStorage.getItem("role")
         : ""
 };
 
@@ -15,7 +15,11 @@ export const appReducer = (state = defaultState, action) => {
             return {...state}
         case 'FETCH_IS_LOGGIN_CHECK_SUCCESS':
             return {...state, isLogged: true}
-        case 'FETCH_IS_LOGGIN_CHECK_FAILURE':
+        case 'REFRESH_TOKEN_REQUEST':
+            return {...state}
+        case 'REFRESH_TOKEN_SUCCESS':
+            return {...state, isLogged: true}
+        case 'REFRESH_TOKEN_FAILURE':
             return {...state, isLogged: false}
         case 'SET_ROLE':
             return {...state, role: action.payload}

@@ -13,7 +13,7 @@ namespace Models.Account {
         public string Password { get; set; }
         [NavigationProperty(true)]
         public ICollection<Event.Event> Events { get; set; }
-        [JsonIgnore]
+        [NavigationProperty]
         public List<RefreshToken> RefreshTokens { get; set; }
 
         public CommercialAccount() =>

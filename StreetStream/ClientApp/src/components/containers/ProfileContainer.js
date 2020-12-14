@@ -2,13 +2,11 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import Profile from "../Profile";
 import {fetchProfile, logOut} from "../../store/Profile/actions";
-import {isLogginCheck} from "../../store/App/actions";
 
 
 class AuthorizationContainer extends Component {
     render() {
         return (<Profile isLogged={this.props.isLogged} logOut={this.props.logOut}
-                         isLogginCheck={this.props.isLogginCheck}
                          fetchProfile={this.props.fetchProfile}
                          profileInfo={this.props.profileInfo}
                          loading={this.props.loading}
@@ -19,15 +17,14 @@ class AuthorizationContainer extends Component {
 const putStateToProps = (state, ownProps) => {
     return {
         isLogged: state.app.isLogged,
+        role: state.app.role,
         profileInfo: state.profile.profileInfo,
         loading: state.profile.loading,
-        role: state.app.role
     };
 }
 
 const linkActionsToProps = {
     logOut,
-    isLogginCheck,
     fetchProfile
 }
 

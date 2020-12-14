@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 namespace DAL.Services {
     public interface IUserService {
         AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress, HttpContext context);
-        AuthenticateResponse RefreshToken(string token, string ipAddress);
+        AuthenticateResponse RefreshToken(string token, string ipAddress, HttpContext context);
         bool RevokeToken(string token, string ipAddress);
     }
 
@@ -59,19 +59,19 @@ namespace DAL.Services {
             return new AuthenticateResponse(account, jwtToken, refreshToken.Token, account.GetType().Name.ToUpper());
         }
 
-        public AuthenticateResponse RefreshToken(string token, string ipAddress) {
-            IAccount account = _unitOfWork.CommercialAccountRepository.GetAsync(u => u.RefreshTokens.Any(t => t.Token == token)).Result.FirstOrDefault();
+        public AuthenticateResponse RefreshToken(string token, string ipAddress, HttpContext context) {
+            IAccount account = _unitOfWork.CommercialAccountRepository.GetAsync(u => u.RefreshTokens.Any(t => t.Token == token), "RefreshTokens").Result.FirstOrDefault();
             // return null if user not found
             if (account == null) {
-                account = _unitOfWork.RegularAccountRepository.GetAsync(u => u.RefreshTokens.Any(t => t.Token == token)).Result.FirstOrDefault();
+                account = _unitOfWork.RegularAccountRepository.GetAsync(u => u.RefreshTokens.Any(t => t.Token == token), "RefreshTokens").Result.FirstOrDefault();
                 if (account == null)
                     return null;
             }
 
-            var refreshToken = account.RefreshTokens.Single(x => x.Token == token);
+            var refreshToken = account.RefreshTokens.SingleOrDefault(x => x.Token == token);
 
             // return null if token is no longer active
-            if (!refreshToken.IsActive)
+            if (!refreshToken.IsActive || refreshToken == null)
                 return null;
 
             // replace old refresh token with a new one and save
@@ -82,16 +82,20 @@ namespace DAL.Services {
             account.RefreshTokens.Add(newRefreshToken);
             if (account is CommercialAccount) {
                 _unitOfWork.CommercialAccountRepository.Update((CommercialAccount)account);
+                context.Session.SetString("user_id", account.Id.ToString());
+                context.Session.SetString("user_role", "commercial");
             }
             if (account is RegularAccount) {
                 _unitOfWork.RegularAccountRepository.Update((RegularAccount)account);
+                context.Session.SetString("user_id", account.Id.ToString());
+                context.Session.SetString("user_role", "regular");
             }
             _unitOfWork.Save();
 
             // generate new jwt
             var jwtToken = generateJwtToken(account);
 
-            return new AuthenticateResponse(account, jwtToken, newRefreshToken.Token, account.GetType().ToString());
+            return new AuthenticateResponse(account, jwtToken, newRefreshToken.Token, account.GetType().Name.ToUpper());
         }
 
         public bool RevokeToken(string token, string ipAddress) {
@@ -102,10 +106,10 @@ namespace DAL.Services {
                 if (account == null)
                     return false;
             }
-            var refreshToken = account.RefreshTokens.Single(x => x.Token == token);
+            var refreshToken = account.RefreshTokens.SingleOrDefault(x => x.Token == token);
 
             // return false if token is not active
-            if (!refreshToken.IsActive)
+            if (!refreshToken.IsActive || refreshToken == null)
                 return false;
 
             // revoke token and save
@@ -125,9 +129,9 @@ namespace DAL.Services {
         // helper methods
 
         private string generateJwtToken(IAccount account) {
-            Dictionary<Type, string> accountRoles = new Dictionary<Type, string>() {
-                { typeof(CommercialAccount), "commercial" },
-                { typeof(RegularAccount), "regular"}
+            Dictionary<string, string> accountRoles = new Dictionary<string, string>() {
+                { typeof(CommercialAccount).Name, "commercial" },
+                { typeof(RegularAccount).Name, "regular"}
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -136,9 +140,9 @@ namespace DAL.Services {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Email, account.Email.ToString()),
-                    new Claim(ClaimTypes.Role, accountRoles.GetValueOrDefault(account.GetType()))
+                    new Claim(ClaimTypes.Role, accountRoles.GetValueOrDefault(account.GetType().Name))
                 }),
-                Expires = DateTime.UtcNow.AddMinutes(15),
+                Expires = DateTime.UtcNow.AddMinutes(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

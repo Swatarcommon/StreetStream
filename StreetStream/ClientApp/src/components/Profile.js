@@ -44,7 +44,7 @@ const EventItem = (props) => {
                                 <Link className="text-light btn btn-dark"
                                       to={`/events/${props.event.id}`}>
                                     Change
-                                </Link> : null
+                                </Link> : <div></div>
                             }
                         </CardText>
                     </animated.div>
@@ -56,21 +56,17 @@ const EventItem = (props) => {
 
 
 export default class Profile extends Component {
-    componentWillMount() {
-        this.props.isLogginCheck();
-        this.loadEvents();
+
+    async componentWillMount() {
+        await this.props.fetchProfile();
     }
 
-    async loadEvents() {
-        this.props.fetchProfile();
-    }
-
-    static renderEventsTable(events) {
+    static renderEventsTable(events, role) {
         if (events) {
             return (
                 <div id='event-list' className='d-flex justify-content-sm-around flex-wrap justify-content-center'>
                     {events.map(event =>
-                        <EventItem event={event}/>
+                        <EventItem key={event.id} role={role} event={event}/>
                     )}
                 </div>
             );
@@ -84,7 +80,7 @@ export default class Profile extends Component {
             let contents = this.props.loading
                 ? <div className='preload'><img src="PreLoad.svg" width="150"
                                                 className="d-inline-block align-top" alt="Preload"/></div>
-                : Profile.renderEventsTable(this.props.profileInfo.events);
+                : Profile.renderEventsTable(this.props.profileInfo.events, this.props.role);
 
             return (
                 <div id="profile-container">

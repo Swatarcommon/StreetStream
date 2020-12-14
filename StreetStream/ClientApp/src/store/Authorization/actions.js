@@ -84,13 +84,11 @@ export const logIn = (account, token) => {
             dispatch(logInSuccess());
             dispatch(changeIsLogged(true));
             dispatch(setRole(authInfo.type));
-            console.log('AUTH TOKEN = ', authInfo.jwtToken);
-            console.log('AUTH TYPE = ', authInfo.type);
             window.localStorage.setItem("isLogged", true);
             window.localStorage.setItem("role", authInfo.type);
-            window.sessionStorage.setItem("access_token", authInfo.jwtToken);
+            window.localStorage.setItem("access_token", authInfo.jwtToken);
         }).catch(error => {
-            if (error.response.data.errorMsg !== undefined)
+            if (error.response !== undefined && error.response.data.errorMsg !== undefined)
                 dispatch(logInFailure(error.response.data.errorMsg));
             else
                 dispatch(logInFailure("Uknown error :("));

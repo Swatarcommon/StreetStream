@@ -1,5 +1,7 @@
-﻿using Models.Account.Interfaces;
+﻿using Models.Account;
+using Models.Account.Interfaces;
 using Models.Authenticate;
+using Models.CustomAttributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -13,7 +15,9 @@ namespace Models.Account {
         public string Email { get; set; }
         [MinLength(8)]
         public string Password { get; set; }
-        [JsonIgnore]
+        [NavigationProperty]
         public List<RefreshToken> RefreshTokens { get; set; }
+        public RegularAccount() =>
+         (RefreshTokens) = (new List<RefreshToken>());
     }
 }

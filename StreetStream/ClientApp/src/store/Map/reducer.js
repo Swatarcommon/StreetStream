@@ -1,7 +1,8 @@
 const defaultState = {
     center: [53.902284, 27.561831],
     zoom: 9,
-    placeMarks:[]
+    placeMarks: [],
+    categories: []
 };
 
 export const mapReducer = (state = defaultState, action) => {
@@ -11,11 +12,17 @@ export const mapReducer = (state = defaultState, action) => {
         case 'SET_POSITION':
             return {...state, center: action.payload}
         case 'FETCH_PLACEMARKS_REQUEST':
-            return {...state, loading: true}
+            return {...state}
         case 'FETCH_PLACEMARKS_SUCCESS':
-            return {...state, loading: false, placeMarks: action.payload, errorMsg: ''}
+            return {...state, placeMarks: action.payload, errorMsg: ''}
         case 'FETCH_PLACEMARKS_FAILURE':
-            return {...state, loading: false, forecasts: [], errorMsg: action.payload}
+            return {...state, errorMsg: action.payload}
+        case 'FETCH_CATEGORIES_REQUEST':
+            return {...state}
+        case 'FETCH_CATEGORIES_SUCCESS':
+            return {...state, categories: action.payload, errorMsg: ''}
+        case 'FETCH_CATEGORIES_FAILURE':
+            return {...state, errorMsg: action.payload}
         default:
             return state;
     }
