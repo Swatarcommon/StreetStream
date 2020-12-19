@@ -2,7 +2,8 @@ const defaultState = {
     isSignUp: false,
     loading: false,
     accountInfo: {},
-    errorMsg: ''
+    errorMsg: '',
+    accountType: undefined
 };
 
 export const authorizationReducer = (state = defaultState, action) => {
@@ -21,6 +22,8 @@ export const authorizationReducer = (state = defaultState, action) => {
             return {...state, loading: false, accountInfo: {}, errorMsg: action.payload}
         case 'RESET_ERRORS':
             return {...state, loading: false, errorMsg: action.payload}
+        case 'SET_ACCOUNT_TYPE':
+            return {...state, accountType: action.payload}
         default:
             return state;
     }

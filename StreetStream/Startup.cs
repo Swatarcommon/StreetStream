@@ -1,11 +1,9 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using DAL;
-using Microsoft.EntityFrameworkCore;
 using Azure.Storage.Blobs;
 using DAL.Services;
 using System.Text;
@@ -29,7 +27,7 @@ namespace StreetStream {
             services.AddCors(options => {
                 options.AddPolicy(name: MyAllowSpecific,
                                   builder => {
-                                      builder.WithOrigins("http://localhost:3000")
+                                      builder.WithOrigins("http://localhost:3000", "http://localhost:49153/")
                                              .AllowAnyHeader()
                                              .AllowAnyMethod()
                                              .AllowCredentials();
@@ -46,11 +44,11 @@ namespace StreetStream {
             services.AddSession();
 
             var key = Encoding.ASCII.GetBytes(Configuration.GetSection("JWT_Secret").Value);
+
             services.AddAuthentication(x => {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(x => {
+            }).AddJwtBearer(x => {
                 x.RequireHttpsMetadata = false;
                 x.SaveToken = true;
                 x.TokenValidationParameters = new TokenValidationParameters {
@@ -98,7 +96,7 @@ namespace StreetStream {
             app.UseSpa(spa => {
                 spa.Options.SourcePath = "ClientApp";
                 if (env.IsDevelopment()) {
-                    spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
+                   spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
                 }
             });
         }

@@ -4,7 +4,10 @@ const defaultState = {
         : false,
     role: (window.localStorage.getItem("role") !== undefined && window.localStorage.getItem("role") !== null)
         ? window.localStorage.getItem("role")
-        : ""
+        : "",
+    id: (window.localStorage.getItem("user_id") !== undefined && window.localStorage.getItem("user_id") !== null)
+        ? window.localStorage.getItem("user_id")
+        : undefined
 };
 
 export const appReducer = (state = defaultState, action) => {
@@ -22,7 +25,7 @@ export const appReducer = (state = defaultState, action) => {
         case 'REFRESH_TOKEN_FAILURE':
             return {...state, isLogged: false}
         case 'SET_ROLE':
-            return {...state, role: action.payload}
+            return {...state, role: action.payload.type, id: action.payload.id}
         default:
             return state;
     }

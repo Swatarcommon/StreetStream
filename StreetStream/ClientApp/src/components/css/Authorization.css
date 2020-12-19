@@ -13,7 +13,7 @@ html {
     background: #6b92a4;
 }
 
-.bgDivImage{
+.bgDivImage {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -209,7 +209,7 @@ html {
 
 .form-structor .login .center {
     position: absolute;
-    top: calc(50% - 10%);
+    top: calc(57% - 10%);
     left: 50%;
     -webkit-transform: translate(-50%, -50%);
     width: 65%;
@@ -221,6 +221,7 @@ html {
     color: #000;
     font-size: 1.7em;
     text-align: center;
+    margin-left: -15%;
 }
 
 .form-structor .login .center .form-title span {
@@ -314,4 +315,11 @@ html {
     opacity: 1;
     visibility: visible;
     -webkit-transition: all 0.3s ease;
+}
+
+.tooltiperr {
+    position: absolute;
+    font-size: 0.5em;
+    margin-top: -14%;
+    z-index: 100;
 }

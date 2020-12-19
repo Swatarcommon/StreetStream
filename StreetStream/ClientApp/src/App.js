@@ -9,6 +9,11 @@ import {NotFound} from "./components/NotFound";
 import {Redirect} from "react-router-dom";
 import NavMenuContainer from "./components/containers/NavMenuContainer";
 import ProfileContainer from "./components/containers/ProfileContainer";
+import {EventDetails} from "./components/EventsList";
+import EventContainer from "./components/containers/EventContainer";
+import {ToolsMenu} from "./components/ToolsMenu";
+import CommercialAccountsListContainer from "./components/containers/CommercialAccountsListContainer";
+import CommercialAccountContainer from "./components/containers/CommercialAccountContainer";
 
 export default class App extends Component {
     render() {
@@ -25,7 +30,6 @@ export default class App extends Component {
         )
     }
 };
-
 class LoginRoutContainer extends Component {
     render() {
         return (
@@ -33,16 +37,17 @@ class LoginRoutContainer extends Component {
         );
     }
 }
-
-
 class DefaultRoutContainer extends Component {
     render() {
         return (
             <Switch>
                 <div>
                     <Route exact path='/' component={MapContainer}/>
-                    <Route path='/events' component={EventsListContainer}/>
+                    <Route exact path='/events' component={EventsListContainer}/>
+                    <Route exact path='/accountslist' component={CommercialAccountsListContainer}/>
+                    <Route path="/events/:id" component={EventContainer}/>
                     <Route exact path='/profile' component={ProfileContainer}/>
+                    <Route path='/profile/:id' component={CommercialAccountContainer}/>
                     <NavMenuContainer/>
                 </div>
             </Switch>

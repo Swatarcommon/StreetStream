@@ -26,15 +26,28 @@ namespace DAL.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
+
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Telephone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(12)")
+                        .HasMaxLength(12);
 
                     b.HasKey("Id");
 
@@ -74,7 +87,13 @@ namespace DAL.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
+
                     b.Property<string>("Password")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -84,6 +103,21 @@ namespace DAL.Migrations
                         .HasFilter("[Email] IS NOT NULL");
 
                     b.ToTable("RegularAccounts");
+                });
+
+            modelBuilder.Entity("Models.Account.Subscriptions", b =>
+                {
+                    b.Property<long>("RegularAccountId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("CommercialAccountId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("RegularAccountId", "CommercialAccountId");
+
+                    b.HasIndex("CommercialAccountId");
+
+                    b.ToTable("Subscriptions");
                 });
 
             modelBuilder.Entity("Models.Authenticate.RefreshToken", b =>
@@ -180,6 +214,9 @@ namespace DAL.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<TimeSpan>("Duration")
                         .HasColumnType("time");
 
@@ -223,15 +260,32 @@ namespace DAL.Migrations
                     b.ToTable("Placemarks");
                 });
 
+            modelBuilder.Entity("Models.Account.Subscriptions", b =>
+                {
+                    b.HasOne("Models.Account.CommercialAccount", "CommercialAccount")
+                        .WithMany("Subscribers")
+                        .HasForeignKey("CommercialAccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Models.Account.RegularAccount", "RegularAccount")
+                        .WithMany("Subscriptions")
+                        .HasForeignKey("RegularAccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Models.Authenticate.RefreshToken", b =>
                 {
                     b.HasOne("Models.Account.CommercialAccount", "CommercialAccount")
                         .WithMany("RefreshTokens")
-                        .HasForeignKey("CommercialAccountId");
+                        .HasForeignKey("CommercialAccountId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Models.Account.RegularAccount", "RegularAccount")
                         .WithMany("RefreshTokens")
-                        .HasForeignKey("RegularAccountId");
+                        .HasForeignKey("RegularAccountId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Models.Event.CategoryEvent", b =>
@@ -239,13 +293,13 @@ namespace DAL.Migrations
                     b.HasOne("Models.Event.Category", "Category")
                         .WithMany("CategoryEvent")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Models.Event.Event", "Event")
                         .WithMany("CategoryEvent")
                         .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -254,7 +308,7 @@ namespace DAL.Migrations
                     b.HasOne("Models.Account.CommercialAccount", "CommercialAccount")
                         .WithMany("Events")
                         .HasForeignKey("CommercialAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

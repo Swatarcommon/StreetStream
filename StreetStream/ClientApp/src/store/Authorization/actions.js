@@ -47,13 +47,23 @@ export const resetErrors = () => {
     }
 }
 
-export const signUp = (account, token) => {
+export const setAccountType = (type) => {
+    return {
+        type: 'SET_ACCOUNT_TYPE',
+        payload: type + "ACCOUNT"
+    }
+}
+
+export const signUpByCommercial = (account, token) => {
     return (dispatch) => {
         dispatch(signUpRequest());
         axios.post(SERVER_URL + '/api/commercialaccounts', {
             account: {
                 email: account.email,
-                password: account.password
+                password: account.password,
+                description: account.description,
+                name: account.name,
+                telephone: account.telephone
             },
             token: token
         }, {
@@ -71,6 +81,32 @@ export const signUp = (account, token) => {
     }
 }
 
+export const signUpByRegular = (account, token) => {
+    return (dispatch) => {
+        dispatch(signUpRequest());
+        axios.post(SERVER_URL + '/api/regularaccounts', {
+            account: {
+                email: account.email,
+                password: account.password,
+                name: account.name
+            },
+            token: token
+        }, {
+            mode: 'no-cors',
+        }).then(response => {
+            const accountInfo = response.data;
+            dispatch(signUpSuccess(accountInfo));
+            window.location.href = '/';
+        }).catch(error => {
+            dispatch(signUpFailure(error.response.data.errorMsg));
+            setTimeout(() => {
+                dispatch(resetErrors());
+            }, 5000);
+        });
+    }
+}
+
+
 export const logIn = (account, token) => {
     return (dispatch) => {
         dispatch(logInRequest());
@@ -83,8 +119,9 @@ export const logIn = (account, token) => {
             const authInfo = response.data;
             dispatch(logInSuccess());
             dispatch(changeIsLogged(true));
-            dispatch(setRole(authInfo.type));
+            dispatch(setRole(authInfo));
             window.localStorage.setItem("isLogged", true);
+            window.localStorage.setItem("user_id", authInfo.id);
             window.localStorage.setItem("role", authInfo.type);
             window.localStorage.setItem("access_token", authInfo.jwtToken);
         }).catch(error => {

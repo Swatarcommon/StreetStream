@@ -1,6 +1,6 @@
 const defaultState = {
     profileInfo: {},
-    loading: false
+    loading: false,
 };
 
 export const profileReducer = (state = defaultState, action) => {
@@ -13,6 +13,17 @@ export const profileReducer = (state = defaultState, action) => {
             return {...state, profileInfo: action.payload, loading: false}
         case 'FETCH_PROFILE_FAILURE':
             return {...state, loading: false}
+        case 'FETCH_UPDATE_PROFLILE_REQUEST':
+            return {...state, loading: true}
+        case 'FETCH_UPDATE_PROFLILE_SUCCESS':
+            return {
+                ...state,
+                loading: false,
+                profileInfo: action.payload,
+                errorMsg: ''
+            }
+        case 'FETCH_UPDATE_PROFLILE_FAILURE':
+            return {...state, loading: false, errorMsg: action.payload}
         default:
             return state;
     }

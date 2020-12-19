@@ -16,8 +16,8 @@ using System.Threading.Tasks;
 
 namespace DAL.Services {
     public interface IUserService {
-        AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress, HttpContext context);
-        AuthenticateResponse RefreshToken(string token, string ipAddress, HttpContext context);
+        AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress, HttpResponse response);
+        AuthenticateResponse RefreshToken(string token, string ipAddress, HttpResponse response);
         bool RevokeToken(string token, string ipAddress);
     }
 
@@ -29,11 +29,12 @@ namespace DAL.Services {
                                                         .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                                                         .Build());
 
-        public AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress, HttpContext context) {
-            IAccount account = _unitOfWork.CommercialAccountRepository.GetAsync(x => x.Email == model.Email && x.Password == model.Password).Result.FirstOrDefault();
+        public AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress, HttpResponse response) {
+            using SHA256 sha256Hash = SHA256.Create();
+            IAccount account = _unitOfWork.CommercialAccountRepository.GetAsync(x => x.Email == model.Email && x.Password == Hasher.GetHash(sha256Hash, model.Password)).Result.FirstOrDefault();
             // return null if user not found
             if (account == null) {
-                account = _unitOfWork.RegularAccountRepository.GetAsync(x => x.Email == model.Email && x.Password == model.Password).Result.FirstOrDefault();
+                account = _unitOfWork.RegularAccountRepository.GetAsync(x => x.Email == model.Email && x.Password == Hasher.GetHash(sha256Hash, model.Password)).Result.FirstOrDefault();
                 if (account == null)
                     return null;
             }
@@ -44,22 +45,28 @@ namespace DAL.Services {
 
             // save refresh token
             account.RefreshTokens.Add(refreshToken);
+
+            var cookieOptions = new CookieOptions {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddMinutes(15)
+            };
+
             if (account is CommercialAccount) {
                 _unitOfWork.CommercialAccountRepository.Update((CommercialAccount)account);
-                context.Session.SetString("user_id", account.Id.ToString());
-                context.Session.SetString("user_role", "commercial");
+                response.Cookies.Append("user_id", account.Id.ToString(), cookieOptions);
+                response.Cookies.Append("user_role", "commercial", cookieOptions);
             }
             if (account is RegularAccount) {
                 _unitOfWork.RegularAccountRepository.Update((RegularAccount)account);
-                context.Session.SetString("user_id", account.Id.ToString());
-                context.Session.SetString("user_role", "regular");
+                response.Cookies.Append("user_id", account.Id.ToString(), cookieOptions);
+                response.Cookies.Append("user_role", "regular", cookieOptions);
             }
             _unitOfWork.Save();
 
             return new AuthenticateResponse(account, jwtToken, refreshToken.Token, account.GetType().Name.ToUpper());
         }
 
-        public AuthenticateResponse RefreshToken(string token, string ipAddress, HttpContext context) {
+        public AuthenticateResponse RefreshToken(string token, string ipAddress, HttpResponse response) {
             IAccount account = _unitOfWork.CommercialAccountRepository.GetAsync(u => u.RefreshTokens.Any(t => t.Token == token), "RefreshTokens").Result.FirstOrDefault();
             // return null if user not found
             if (account == null) {
@@ -80,15 +87,21 @@ namespace DAL.Services {
             refreshToken.RevokedByIp = ipAddress;
             refreshToken.ReplacedByToken = newRefreshToken.Token;
             account.RefreshTokens.Add(newRefreshToken);
+
+            var cookieOptions = new CookieOptions {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddMinutes(15)
+            };
+
             if (account is CommercialAccount) {
                 _unitOfWork.CommercialAccountRepository.Update((CommercialAccount)account);
-                context.Session.SetString("user_id", account.Id.ToString());
-                context.Session.SetString("user_role", "commercial");
+                response.Cookies.Append("user_id", account.Id.ToString(), cookieOptions);
+                response.Cookies.Append("user_role", "commercial", cookieOptions);
             }
             if (account is RegularAccount) {
                 _unitOfWork.RegularAccountRepository.Update((RegularAccount)account);
-                context.Session.SetString("user_id", account.Id.ToString());
-                context.Session.SetString("user_role", "regular");
+                response.Cookies.Append("user_id", account.Id.ToString(), cookieOptions);
+                response.Cookies.Append("user_role", "regular", cookieOptions);
             }
             _unitOfWork.Save();
 
@@ -99,10 +112,10 @@ namespace DAL.Services {
         }
 
         public bool RevokeToken(string token, string ipAddress) {
-            IAccount account = _unitOfWork.CommercialAccountRepository.GetAsync(u => u.RefreshTokens.Any(t => t.Token == token)).Result.FirstOrDefault();
+            IAccount account = _unitOfWork.CommercialAccountRepository.GetAsync(u => u.RefreshTokens.Any(t => t.Token == token), "refreshtokens").Result.FirstOrDefault();
             // return null if user not found
             if (account == null) {
-                account = _unitOfWork.RegularAccountRepository.GetAsync(u => u.RefreshTokens.Any(t => t.Token == token)).Result.FirstOrDefault();
+                account = _unitOfWork.RegularAccountRepository.GetAsync(u => u.RefreshTokens.Any(t => t.Token == token), "refreshtokens").Result.FirstOrDefault();
                 if (account == null)
                     return false;
             }
@@ -142,7 +155,7 @@ namespace DAL.Services {
                     new Claim(ClaimTypes.Email, account.Email.ToString()),
                     new Claim(ClaimTypes.Role, accountRoles.GetValueOrDefault(account.GetType().Name))
                 }),
-                Expires = DateTime.UtcNow.AddMinutes(1),
+                Expires = DateTime.UtcNow.AddMinutes(15),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

@@ -23,10 +23,11 @@ export class NavMenu extends Component {
     }
 
     render() {
-        if(this.props.isLogged){
+        if (this.props.isLogged) {
             return (
                 <footer>
-                    <Navbar className="navbar-expand-md navbar-toggleable-sm border-bottom fixed-bottom navbar bar" light>
+                    <Navbar className="navbar-expand-md navbar-toggleable-sm border-bottom fixed-bottom navbar bar"
+                            light>
                         <Container>
                             <NavbarToggler onClick={this.toggleNavbar} className="mr-2"/>
                             <Collapse className="d-lg-block-flex flex-lg-fill justify-content-center"
@@ -37,6 +38,10 @@ export class NavMenu extends Component {
                                     </NavItem>
                                     <NavItem>
                                         <NavLink tag={Link} className="text-dark" to="/events">Events</NavLink>
+                                    </NavItem>
+                                    <NavItem>
+                                        <NavLink tag={Link} className="text-dark" to="/accountslist">Commercial
+                                            Accounts</NavLink>
                                     </NavItem>
                                     <NavItem>
                                         <NavLink tag={Link} className="text-dark" to="/profile">Profile</NavLink>
@@ -47,10 +52,11 @@ export class NavMenu extends Component {
                     </Navbar>
                 </footer>
             );
-        }else {
+        } else {
             return (
                 <footer>
-                    <Navbar className="navbar-expand-md navbar-toggleable-sm border-bottom fixed-bottom navbar bar" light>
+                    <Navbar className="navbar-expand-md navbar-toggleable-sm border-bottom fixed-bottom navbar bar"
+                            light>
                         <Container>
                             <NavbarToggler onClick={this.toggleNavbar} className="mr-2"/>
                             <Collapse className="d-lg-block-flex flex-lg-fill justify-content-center"
@@ -61,6 +67,10 @@ export class NavMenu extends Component {
                                     </NavItem>
                                     <NavItem>
                                         <NavLink tag={Link} className="text-dark" to="/events">Events</NavLink>
+                                    </NavItem>
+                                    <NavItem>
+                                        <NavLink tag={Link} className="text-dark" to="/accountslist">Commercial
+                                            Accounts</NavLink>
                                     </NavItem>
                                     <NavItem>
                                         <NavLink tag={Link} className="text-dark"
@@ -73,6 +83,5 @@ export class NavMenu extends Component {
                 </footer>
             );
         }
-
     }
 }

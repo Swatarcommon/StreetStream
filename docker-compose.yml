@@ -1,0 +1,26 @@
+version: "3"
+services:
+  streetstream-db:
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    container_name: streetstream-db
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "admin11@"
+      MSSQL_PID: "Express"
+    ports:
+      - "1434:1433"
+
+  streetstream-server:
+    image: swatar/streetstream-server
+    build:
+      context: .
+      dockerfile: ./StreetStream/Dockerfile
+    container_name: streetstream-server
+    depends_on:
+      - streetstream-db
+    ports:
+      - "3001:80"
+
+
+
+

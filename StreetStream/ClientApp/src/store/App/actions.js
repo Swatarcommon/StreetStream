@@ -1,5 +1,6 @@
 import axios from "axios";
 import {SERVER_URL} from "../../config.json";
+
 axios.defaults.withCredentials = true;
 const TOKEN = 'Bearer ' + window.localStorage.getItem("access_token");
 
@@ -72,24 +73,25 @@ export const isLogginCheck = () => {
 export const refreshToken = () => {
     return (dispatch) => {
         dispatch(refreshTokenRequest());
-        axios.post(SERVER_URL + '/api/accounts/refresh-token', {
-            }
+        axios.post(SERVER_URL + '/api/accounts/refresh-token', {}
         ).then(response => {
             const authInfo = response.data;
             dispatch(refreshTokenSuccess());
             console.log('refreshToken TOKEN = ', authInfo.jwtToken);
             console.log('refreshToken TYPE = ', authInfo.type);
             dispatch(changeIsLogged(true));
-            dispatch(setRole(authInfo.type));
+            dispatch(setRole(authInfo));
             window.localStorage.setItem("isLogged", true);
             window.localStorage.setItem("role", authInfo.type);
+            window.localStorage.setItem("user_id", authInfo.id);
             window.localStorage.setItem("access_token", authInfo.jwtToken);
             window.location.reload();
         }).catch(error => {
             dispatch(refreshTokenFailure());
-            dispatch(setRole(""));
+            dispatch(setRole({role: "", id: undefined})); //new added
             dispatch(changeIsLogged(false));
             window.localStorage.removeItem("isLogged");
+            window.localStorage.removeItem("user_id");
             window.localStorage.removeItem("role");
             window.localStorage.removeItem("access_token");
         });

@@ -1,16 +1,25 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import Authorization from "../Authorization";
-import {logIn, resetErrors, signUp} from "../../store/Authorization/actions";
+import {
+    logIn,
+    resetErrors,
+    setAccountType,
+    signUpByCommercial,
+    signUpByRegular
+} from "../../store/Authorization/actions";
 
 
 class AuthorizationContainer extends Component {
     render() {
         return (<Authorization isLogged={this.props.isLogged} resetErrors={this.props.resetErrors}
                                errorMsg={this.props.errorMsg}
-                               signUp={this.props.signUp}
+                               signUpByCommercial={this.props.signUpByCommercial}
+                               signUpByRegular={this.props.signUpByRegular}
                                logIn={this.props.logIn}
-                               isSignUp={this.props.isSignUp}/>)
+                               isSignUp={this.props.isSignUp}
+                               setAccountType={this.props.setAccountType}
+                               accountType={this.props.accountType}/>)
     }
 }
 
@@ -20,14 +29,17 @@ const putStateToProps = (state, ownProps) => {
         loading: state.authorization.loading,
         accountInfo: state.authorization.accountInfo,
         errorMsg: state.authorization.errorMsg,
+        accountType: state.authorization.accountType,
         isLogged: state.app.isLogged
     };
 }
 
 const linkActionsToProps = {
-    signUp,
+    signUpByCommercial,
+    signUpByRegular,
     logIn,
-    resetErrors
+    resetErrors,
+    setAccountType
 }
 
 export default connect(putStateToProps, linkActionsToProps)(AuthorizationContainer);

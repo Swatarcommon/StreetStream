@@ -77,7 +77,7 @@ const fetchCategroiesFailure = (error) => {
 export const fetchPlacemarks = () => {
     return (dispatch) => {
         dispatch(fetchPlacemarksRequest());
-        axios.get(SERVER_URL + '/api/placemarks?offset=0&maxid=10000000&orderByFields=y&desc=false', {
+        axios.get(SERVER_URL + '/api/placemarks?offset=0&maxid=10000000&orderByFields=y&desc=false&includingProps=event,commercialaccount', {
             mode: 'no-cors',
         })
             .then(response => {
@@ -113,6 +113,7 @@ export const fetchAddEvent = (event) => {
             date: event.Date,
             duration: event.Duration,
             placemark: event.placemark,
+            description: event.Description,
             categoryevent: event.CategoryEvent
         })
             .then(response => {

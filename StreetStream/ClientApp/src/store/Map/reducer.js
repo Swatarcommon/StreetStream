@@ -1,6 +1,6 @@
 const defaultState = {
     center: [53.902284, 27.561831],
-    zoom: 9,
+    zoom: 17,
     placeMarks: [],
     categories: []
 };

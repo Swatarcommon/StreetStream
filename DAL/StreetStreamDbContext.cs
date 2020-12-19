@@ -31,13 +31,14 @@ namespace DAL {
                       .HasKey(evt => evt.Id);
                 entity.HasIndex(evt => evt.Id);
                 entity.HasOne(cmrAcc => cmrAcc.CommercialAccount)
-                      .WithMany(evt => evt.Events);
+                      .WithMany(evt => evt.Events).OnDelete(DeleteBehavior.Cascade);
                 entity.HasOne(plcmrk => plcmrk.Placemark)
                       .WithOne(evt => evt.Event)
                       .HasForeignKey<Placemark>(plc => plc.EventId);
                 entity.Property(evt => evt.Name)
                       .IsRequired()
                       .HasMaxLength(255);
+                entity.Property(evt => evt.Description);
                 entity.Property(evt => evt.Date)
                       .IsRequired();
                 entity.Property(evt => evt.Duration)
@@ -59,12 +60,12 @@ namespace DAL {
                 entity.HasOne(evt => evt.Event)
                       .WithMany(ctg => ctg.CategoryEvent)
                       .HasForeignKey(evtK => evtK.EventId)
-                      .OnDelete(DeleteBehavior.Restrict);
+                      .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(ctg => ctg.Category)
                       .WithMany(evt => evt.CategoryEvent)
                       .HasForeignKey(ctgK => ctgK.CategoryId)
-                      .OnDelete(DeleteBehavior.Restrict);
+                      .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<CommercialAccount>(entity => {
@@ -72,25 +73,57 @@ namespace DAL {
                       .HasIndex(account => account.Email).IsUnique();
                 entity.HasMany(evnt => evnt.Events)
                       .WithOne(cmrAcc => cmrAcc.CommercialAccount)
-                      .IsRequired()
-                      .OnDelete(DeleteBehavior.Restrict);
+                      .IsRequired();
                 entity.HasMany(refToken => refToken.RefreshTokens)
                        .WithOne(cmrAcc => cmrAcc.CommercialAccount);
                 entity.Property(account => account.Id)
                        .ValueGeneratedOnAdd();
+                entity.Property(account => account.Name)
+                      .HasMaxLength(20)
+                      .IsRequired();
                 entity.Property(account => account.Password)
-                      .HasMaxLength(50)
+                      .IsRequired();
+                entity.Property(account => account.Telephone)
+                      .HasMaxLength(12)
+                      .IsRequired();
+                entity.Property(account => account.Description)
                       .IsRequired();
                 entity.Property(account => account.Email)
                       .HasMaxLength(255)
                       .IsRequired();
             });
 
+            modelBuilder.Entity<Subscriptions>(entity => {
+                entity.HasKey(k => new { k.RegularAccountId, k.CommercialAccountId });
+
+                entity.HasOne(evt => evt.RegularAccount)
+                      .WithMany(ctg => ctg.Subscriptions)
+                      .HasForeignKey(evtK => evtK.RegularAccountId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(ctg => ctg.CommercialAccount)
+                      .WithMany(evt => evt.Subscribers)
+                      .HasForeignKey(ctgK => ctgK.CommercialAccountId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<RegularAccount>(entity => {
+                entity.ToTable("RegularAccounts")
+                      .HasIndex(rglAcc => rglAcc.Email)
+                      .IsUnique();
+                entity.Property(rglAcc => rglAcc.Id)
+                       .ValueGeneratedOnAdd();
+                entity.Property(rglAcc => rglAcc.Name).HasMaxLength(20).IsRequired();
+                entity.Property(rglAcc => rglAcc.Password).IsRequired();
+            });
+
             modelBuilder.Entity<RefreshToken>(entity => {
                 entity.ToTable("RefreshTokens")
-                .HasIndex(refToken => refToken.Id);
+                    .HasIndex(refToken => refToken.Id);
                 entity.HasOne(refToken => refToken.CommercialAccount)
-                    .WithMany(evt => evt.RefreshTokens);
+                    .WithMany(evt => evt.RefreshTokens).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(refToken => refToken.RegularAccount)
+                    .WithMany(evt => evt.RefreshTokens).OnDelete(DeleteBehavior.Cascade);
                 entity.Property(refToken => refToken.Token).IsRequired();
                 entity.Property(refToken => refToken.Expires).IsRequired();
                 entity.Property(refToken => refToken.Created).IsRequired();
@@ -103,13 +136,6 @@ namespace DAL {
             modelBuilder.Entity<Placemark>(entity => {
                 entity.ToTable("Placemarks")
                 .HasIndex(plc => plc.Id);
-            });
-
-            modelBuilder.Entity<RegularAccount>(entity => {
-                entity.ToTable("RegularAccounts")
-                .HasIndex(rglAcc => rglAcc.Email).IsUnique();
-                entity.Property(rglAcc => rglAcc.Id)
-                       .ValueGeneratedOnAdd();
             });
 
             modelBuilder.Entity<Image>(entity => {

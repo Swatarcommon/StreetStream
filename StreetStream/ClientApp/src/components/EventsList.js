@@ -7,7 +7,7 @@ import {useSpring, animated} from 'react-spring'
 import './css/EventsList.css';
 
 const EventItem = (props) => {
-    const imgUrl = SERVER_URL + '/api/images/' + '1.jpg';
+    const imgUrl = SERVER_URL + '/api/images/' + 'eventStab.jpg';
     const [animProps, set] = useSpring(() => ({
         x: 0,
         y: 0,
@@ -30,8 +30,8 @@ const EventItem = (props) => {
                 <CardImgOverlay>
                     <animated.div
                         style={animPropsText}>
-                        <CardTitle>{props.event.name}</CardTitle>
-                        <CardText>Event date {props.event.date}</CardText>
+                        <CardTitle style={{color:'black'}}>{props.event.name}</CardTitle>
+                        <CardText style={{color:'black'}}>Event date {props.event.date}</CardText>
                         <CardText>
                             <Link className="text-light btn btn-dark"
                                   to={`/?x=${props.event.placemark.x}&y=${props.event.placemark.y}`}>
