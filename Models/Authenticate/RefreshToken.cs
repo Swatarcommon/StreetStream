@@ -23,7 +23,6 @@ namespace Models.Authenticate {
         public string RevokedByIp { get; set; }
         public string ReplacedByToken { get; set; }
         public bool IsActive => Revoked == null && !IsExpired;
-        public CommercialAccount CommercialAccount { get; set; }
-        public RegularAccount RegularAccount { get; set; }
+        public Account.Account Account { get; set; }
     }
 }

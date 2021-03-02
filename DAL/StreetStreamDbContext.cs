@@ -68,20 +68,25 @@ namespace DAL {
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
+            modelBuilder.Entity<Account>(entity => {
+                entity.ToTable("Accounts");
+                entity.HasIndex(acc => acc.Id);
+                entity.Property(acc => acc.Email)
+                     .HasMaxLength(255)
+                     .IsRequired();
+                entity.HasMany(acc => acc.RefreshTokens)
+                      .WithOne(tkn => tkn.Account);
+                entity.Property(acc => acc.Password)
+                      .HasMaxLength(255)
+                      .IsRequired();
+            });
+
             modelBuilder.Entity<CommercialAccount>(entity => {
-                entity.ToTable("CommercialAccounts")
-                      .HasIndex(account => account.Email).IsUnique();
                 entity.HasMany(evnt => evnt.Events)
                       .WithOne(cmrAcc => cmrAcc.CommercialAccount)
                       .IsRequired();
-                entity.HasMany(refToken => refToken.RefreshTokens)
-                       .WithOne(cmrAcc => cmrAcc.CommercialAccount);
-                entity.Property(account => account.Id)
-                       .ValueGeneratedOnAdd();
                 entity.Property(account => account.Name)
                       .HasMaxLength(20)
-                      .IsRequired();
-                entity.Property(account => account.Password)
                       .IsRequired();
                 entity.Property(account => account.Telephone)
                       .HasMaxLength(12)
@@ -99,20 +104,15 @@ namespace DAL {
                 entity.HasOne(evt => evt.RegularAccount)
                       .WithMany(ctg => ctg.Subscriptions)
                       .HasForeignKey(evtK => evtK.RegularAccountId)
-                      .OnDelete(DeleteBehavior.Cascade);
+                      .OnDelete(DeleteBehavior.NoAction);
 
                 entity.HasOne(ctg => ctg.CommercialAccount)
                       .WithMany(evt => evt.Subscribers)
                       .HasForeignKey(ctgK => ctgK.CommercialAccountId)
-                      .OnDelete(DeleteBehavior.Cascade);
+                      .OnDelete(DeleteBehavior.NoAction);
             });
 
             modelBuilder.Entity<RegularAccount>(entity => {
-                entity.ToTable("RegularAccounts")
-                      .HasIndex(rglAcc => rglAcc.Email)
-                      .IsUnique();
-                entity.Property(rglAcc => rglAcc.Id)
-                       .ValueGeneratedOnAdd();
                 entity.Property(rglAcc => rglAcc.Name).HasMaxLength(20).IsRequired();
                 entity.Property(rglAcc => rglAcc.Password).IsRequired();
             });
@@ -120,9 +120,7 @@ namespace DAL {
             modelBuilder.Entity<RefreshToken>(entity => {
                 entity.ToTable("RefreshTokens")
                     .HasIndex(refToken => refToken.Id);
-                entity.HasOne(refToken => refToken.CommercialAccount)
-                    .WithMany(evt => evt.RefreshTokens).OnDelete(DeleteBehavior.Cascade);
-                entity.HasOne(refToken => refToken.RegularAccount)
+                entity.HasOne(refToken => refToken.Account)
                     .WithMany(evt => evt.RefreshTokens).OnDelete(DeleteBehavior.Cascade);
                 entity.Property(refToken => refToken.Token).IsRequired();
                 entity.Property(refToken => refToken.Expires).IsRequired();
@@ -150,6 +148,7 @@ namespace DAL {
         public DbSet<Event> Events { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<CategoryEvent> CategoryEvents { get; set; }
+        public DbSet<Account> Accounts { get; set; }
         public DbSet<CommercialAccount> CommercialAccounts { get; set; }
         public DbSet<RegularAccount> RegularAccounts { get; set; }
         public DbSet<Image> Images { get; set; }

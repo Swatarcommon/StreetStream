@@ -19,13 +19,23 @@ namespace StreetStream.Controllers {
             (this.unitOfWork, this.recaptcha) = (unitOfWork, recaptcha);
 
         [HttpGet]
-        public ActionResult<IEnumerable<RegularAccount>> Get(string orderByFields, string desc = "false", long minid = 0, long maxid = 1, int offset = 2, string includingProps = "") {
+        public ActionResult<IEnumerable<RegularAccount>> Get(string orderByFields, string desc = "false", long minid = 0, long maxid = long.MaxValue, int offset = 0, string includingProps = "") {
             var regularAccounts = unitOfWork.RegularAccountRepository.GetAsync(p => p.Id >= minid && p.Id <= maxid, includingProps, offset, orderByFields, desc);
             if (regularAccounts == null) {
                 Response.Headers.Add("XXX-ERROR-MESSAGE", "Invalid-Query");
                 return BadRequest(new { errorMsg = "Invalid-Query" });
             }
             return Ok(regularAccounts.Result);
+        }
+
+        [HttpGet("{id}")]
+        public ActionResult<RegularAccount> Get(long id, string includingProps = "") {
+            var regularAccountItem = unitOfWork.RegularAccountRepository.GetByAsync(p => p.Id == id, "").Result;
+            if (regularAccountItem == null) {
+                Response.Headers.Add("XXX-ERROR", "Invalid-Id");
+                return BadRequest(new { errorMsg = "Invalid Id" });
+            }
+            return Ok(regularAccountItem);
         }
 
         [HttpPost]
@@ -35,11 +45,11 @@ namespace StreetStream.Controllers {
                 using SHA256 sha256Hash = SHA256.Create();
                 regularAccounts.Account.Password = Hasher.GetHash(sha256Hash, regularAccounts.Account.Password);
                 unitOfWork.RegularAccountRepository.Insert(regularAccounts.Account);
-                if (!Success) {
+                if (false) {
                     Response.Headers.Add("XXX-CAPTCHA-ERROR", "You'r bot, asshole!");
                     return BadRequest(new { errorMsg = "You'r bot, asshole!", captchaErrors = $"{ErrorCodes}" });
                 }
-                if (unitOfWork.CommercialAccountRepository.GetByAsync(item => item.Email == regularAccounts.Account.Email).Result == null) {
+                if (unitOfWork.RegularAccountRepository.GetByAsync(item => item.Email == regularAccounts.Account.Email).Result == null) {
                     unitOfWork.Save();
                     return Ok(regularAccounts);
                 } else {
